@@ -20,6 +20,7 @@ public class Realty {
     private int month_price;
     private float y_coordinate;
     private float x_coordinate;
+
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 

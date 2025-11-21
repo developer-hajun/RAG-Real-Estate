@@ -1,0 +1,9 @@
+package ssafy.realty.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/api/real-estate")
+public class RealtyController {
+}

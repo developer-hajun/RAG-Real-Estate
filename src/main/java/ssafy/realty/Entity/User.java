@@ -20,7 +20,8 @@ public class User {
     private String name;
     private int age;
     private List<Post> myPosts;
-    private List<Post> myComments;
+    private List<Comment> myComments;
+    private List<Favorite> myFavorites;
     private List<SearchHistory> searchHistories;
 
     private LocalDateTime birthDate;

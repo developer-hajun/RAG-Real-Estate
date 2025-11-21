@@ -16,7 +16,6 @@ public class Review {
 
     private int rating;
     private Realty realty;
-    private User user;
 
     private String title;
     private String text;
