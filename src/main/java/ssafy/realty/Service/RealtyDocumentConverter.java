@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j // 로그 출력을 위해 추가 (선택사항)
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RealtyDocumentConverter {
