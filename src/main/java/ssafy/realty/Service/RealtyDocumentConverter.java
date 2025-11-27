@@ -1,25 +1,71 @@
 package ssafy.realty.Service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j; // 로깅을 위해 추가 추천
 import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.stereotype.Service;
 import ssafy.realty.Entity.Realty;
+import ssafy.realty.Mapper.RealtyMapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Slf4j // 로그 출력을 위해 추가 (선택사항)
+@Service
+@RequiredArgsConstructor
 public class RealtyDocumentConverter {
 
-    public Document toDocument(Realty realty) {
+    private final RealtyMapper realtyMapper;
+    private final VectorStore vectorStore;
 
+    private static final int BATCH_SIZE = 100;
+
+    public void convertAndUploadAll() {
+        List<Realty> realities = realtyMapper.selectAllRealty();
+        log.info("총 {}개의 매물 데이터를 조회했습니다.", realities.size());
+
+        List<Document> documentBatch = new ArrayList<>();
+
+        for (int i = 0; i < realities.size(); i++) {
+            documentBatch.add(toDocument(realities.get(i)));
+
+            if (documentBatch.size() >= BATCH_SIZE || i == realities.size() - 1) {
+                uploadBatch(documentBatch);
+                documentBatch.clear();
+            }
+        }
+
+        log.info("모든 데이터 업로드 완료");
+    }
+
+
+    private void uploadBatch(List<Document> batch) {
+        if (batch.isEmpty()) return;
+        try {
+            vectorStore.add(batch);
+            log.info("{}개 데이터 배치 저장 완료", batch.size());
+        } catch (Exception e) {
+            log.error("배치 저장 중 오류 발생: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * 단일 Realty 객체를 Spring AI Document로 변환
+     */
+    public Document toDocument(Realty realty) {
         String content = String.format(
-            "이 매물의 이름은 %s이고, 주소는 %s입니다. 보증금 %d만원에 월세 %d만원인 매물입니다.",
-            realty.getName(),
-            realty.getAddress(),
-            realty.getE_price(),
-            realty.getMonth_price()
+                "이 매물의 이름은 %s이고, 주소는 %s입니다. 보증금 %d만원에 월세 %d만원인 매물입니다.",
+                realty.getName(),
+                realty.getAddress(),
+                realty.getE_price(),
+                realty.getMonth_price()
         );
 
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("realty_id", realty.getId());
+        metadata.put("realty_id", String.valueOf(realty.getId()));
         metadata.put("price_deposit", realty.getE_price());
         metadata.put("price_monthly", realty.getMonth_price());
         metadata.put("location_lat", realty.getY_coordinate());
@@ -30,6 +76,7 @@ public class RealtyDocumentConverter {
     }
 
     private String extractRegion(String address) {
-        return address.split(" ")[0]; //아직 어떻게 필터링 할지 고민중임 -> 추후 수정 가능
+        if (address == null || address.isEmpty()) return "Unknown";
+        return address.split(" ")[0];
     }
 }
