@@ -16,6 +16,7 @@
 
     <select id = "selectCommentsByUserId" resultType="ssafy.realty.Entity.Comment">
         select * from Comment a where a.user_id=#{userId};
+
     </select>
     <select id="selectPostByID" resultType="ssafy.realty.Entity.Comment" resultMap = "CommentResultMap">
         select * from Comment a left join Comment b on a.id=b.parentComment_id where a.post_id=#{postId};

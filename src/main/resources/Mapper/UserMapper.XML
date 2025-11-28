@@ -1,2 +1,38 @@
 <mapper namespace="ssafy.realty.Mapper.UserMapper">
+
+    <insert id="saveUser" parameterType="ssafy.realty.Entity.User" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO User (email,password,name,age,birthDate,createdDate,updatedDate)
+        VALUES (#{email},#{password},#{name},#{age},#{birthDate}, NOW(), NOW())
+    </insert>
+
+    <select id="findByEmail" parameterType="String" resultType="ssafy.realty.Entity.User">
+        SELECT *
+        FROM User
+        WHERE email = #{email} AND password = #{password}
+    </select>
+
+    <select id="findById" parameterType="String" resultType="ssafy.realty.Entity.User">
+        SELECT *
+        FROM User
+        WHERE id = #{id}
+    </select>
+
+    <update id="updateUser" parameterType="ssafy.realty.Entity.User">
+        UPDATE User
+        SET name = #{name},
+            age = #{age},
+            email = #{email},
+            birthDate = #{birthDate},
+            updatedDate = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findSearchHistoryByUserId" parameterType="int" resultType="ssafy.realty.Entity.SearchHistory">
+        SELECT id, createdDate, updatedDate, user_id as userId, text
+        FROM SearchHistory
+        WHERE user_id = #{userId}
+        ORDER BY createdDate DESC
+    </select>
+
+
 </mapper>
