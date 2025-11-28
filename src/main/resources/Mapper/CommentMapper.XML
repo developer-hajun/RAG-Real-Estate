@@ -1,2 +1,54 @@
 <mapper namespace="ssafy.realty.Mapper.CommentMapper">
+
+    <resultMap id="CommentResultMap" type="ssafy.realty.Entity.Comment">
+        <id property="id" column="a_id"/>
+        <result property="content" column="a_content"/>
+        <result property="createdDate" column="a_created_date"/>
+        <result property="updatedDate" column="a_updated_date"/>
+
+        <collection property="replies" ofType="ssafy.realty.Entity.Comment">
+            <id property="id" column="b_id"/>
+            <result property="content" column="b_content"/>
+            <result property="createdDate" column="b_created_date"/>
+            <result property="updatedDate" column="b_updated_date"/>
+            <association property="parentComment" column="parent_comment_id" javaType="ssafy.realty.Entity.Comment"/>
+        </collection>
+    </resultMap>
+
+    <select id = "selectCommentsByUserId" resultType="ssafy.realty.Entity.Comment">
+        select * from Comment a where a.user_id=#{userId};
+    </select>
+    <select id="selectPostByID" resultType="ssafy.realty.Entity.Comment" resultMap = "CommentResultMap">
+        select * from Comment a left join Comment b on a.id=b.parentComment_id where a.id=#{postId};
+</select>
+
+    <update id="updateComment" parameterType="ssafy.realty.Entity.Comment">
+        UPDATE Comment
+        SET content = #{content},
+            updatedDate = #{updatedDate}
+        WHERE id = #{id}
+    </update>
+    <insert id="insertComment">
+        INSERT INTO Comment (
+            post_id,
+            user_id,
+            content,
+            createdDate,
+            updatedDate,
+            parentComment_id
+        ) VALUES (
+                     #{post.id},
+                     #{user.id},
+                     #{content},
+                     #{createdDate},
+                     #{updatedDate},
+                    <if test="parentComment != null">#{parentComment.id}</if>
+                    <if test="parentComment == null">NULL</if>
+                 )
+    </insert>
+    <delete id="deleteComment">
+        DELETE FROM Comment
+        WHERE id = #{commentId}
+    </delete>
 </mapper>
+
