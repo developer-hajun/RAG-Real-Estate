@@ -17,7 +17,7 @@
         WHERE id = #{id}
     </select>
 
-    <update id="updateUser" parameterType="ssafy.realty.Entity.User">
+    <update id="update" parameterType="ssafy.realty.Entity.User">
         UPDATE User
         SET name = #{name},
             age = #{age},
