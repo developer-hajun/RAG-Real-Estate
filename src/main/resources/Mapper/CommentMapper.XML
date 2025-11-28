@@ -11,7 +11,6 @@
             <result property="content" column="b_content"/>
             <result property="createdDate" column="b_created_date"/>
             <result property="updatedDate" column="b_updated_date"/>
-            <association property="parentComment" column="parent_comment_id" javaType="ssafy.realty.Entity.Comment"/>
         </collection>
     </resultMap>
 
@@ -19,7 +18,7 @@
         select * from Comment a where a.user_id=#{userId};
     </select>
     <select id="selectPostByID" resultType="ssafy.realty.Entity.Comment" resultMap = "CommentResultMap">
-        select * from Comment a left join Comment b on a.id=b.parentComment_id where a.id=#{postId};
+        select * from Comment a left join Comment b on a.id=b.parentComment_id where a.post_id=#{postId};
 </select>
 
     <update id="updateComment" parameterType="ssafy.realty.Entity.Comment">
