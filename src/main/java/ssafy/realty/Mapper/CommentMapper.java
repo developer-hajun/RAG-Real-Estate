@@ -14,7 +14,7 @@ public interface CommentMapper {
 
     int updateComment(Comment comment);
 
-    int insertComment(Comment comment,int postId,int UserId);
+    int insertComment(Comment comment,int postId,int UserId,int parentCommentId);
 
     int deleteComment(Integer commentId);
 

@@ -25,8 +25,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<ResponseDto<?>> createComment(Comment comment,int postId,int UserId) {
-        commentService.insertComment(comment,postId,UserId);
+    public ResponseEntity<ResponseDto<?>> createComment(Comment comment,int postId,int UserId,int parentCommentId) {
+        commentService.insertComment(comment,postId,UserId,parentCommentId);
         return ResponseEntity.ok(ResponseDto.create(CREATED.value(), "댓글 객체를 생성 했습니다."));
     }
     @GetMapping("/post/{id}")

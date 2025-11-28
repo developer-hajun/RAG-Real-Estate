@@ -36,12 +36,12 @@
             updatedDate,
             parentComment_id
         ) VALUES (
-                     #{post.id},
-                     #{user.id},
+                     #{postId},
+                     #{userId},
                      #{content},
                      #{createdDate},
                      #{updatedDate},
-                    <if test="parentComment != null">#{parentComment.id}</if>
+                    <if test="parentComment != null">#{parentCommentId}</if>
                     <if test="parentComment == null">NULL</if>
                  )
     </insert>

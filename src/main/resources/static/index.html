@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>부동산 정보 (Full API Version)</title>
+
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css"
+    />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue-router@4/dist/vue-router.global.js"></script>
+
+    <style>
+      /* =========================================
+           DESIGN SYSTEM (Toss Style)
+           ========================================= */
+      :root {
+        --t-blue: #0064ff;
+        --t-blue-hover: #0050cc;
+        --t-bg: #f2f4f6;
+        --t-white: #ffffff;
+        --t-text-main: #191f28;
+        --t-text-sub: #4e5968;
+        --t-text-grey: #8b95a1;
+        --t-border: #e5e8eb;
+        --t-red: #ff3b30;
+        --radius-L: 24px;
+        --radius-M: 16px;
+        --radius-S: 12px;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Pretendard", sans-serif;
+      }
+      body {
+        background-color: var(--t-bg);
+        color: var(--t-text-main);
+        overflow-x: hidden;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+      }
+      ul {
+        list-style: none;
+      }
+      input,
+      textarea {
+        outline: none;
+      }
+
+      /* HEADER */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .header-inner {
+        width: 100%;
+        max-width: 1000px;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--t-blue);
+      }
+      nav {
+        display: flex;
+        gap: 24px;
+      }
+      nav a {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--t-text-sub);
+        transition: color 0.2s;
+      }
+      nav a:hover,
+      nav a.router-link-active {
+        color: var(--t-blue);
+      }
+
+      /* LAYOUT */
+      .main-container {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        max-width: 720px;
+        margin: 0 auto;
+        min-height: 100vh;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      /* CARDS */
+      .card {
+        background: var(--t-white);
+        border-radius: var(--radius-L);
+        padding: 24px;
+        box-shadow: var(--shadow);
+        margin-bottom: 16px;
+        position: relative;
+        transition: transform 0.2s var(--ease), box-shadow 0.2s;
+      }
+      .card.hoverable:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+      }
+      .card h3 {
+        font-size: 18px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+      .card p {
+        color: var(--t-text-sub);
+        font-size: 14px;
+        margin-bottom: 4px;
+        line-height: 1.5;
+      }
+
+      /* BUTTONS & INPUTS */
+      .btn {
+        background-color: var(--t-blue);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: var(--radius-S);
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .btn:hover {
+        background-color: var(--t-blue-hover);
+      }
+      .btn-secondary {
+        background-color: #e8f3ff;
+        color: var(--t-blue);
+      }
+      .btn-danger {
+        background-color: #ffeaea;
+        color: var(--t-red);
+      }
+      .btn-sm {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      .input-box {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid var(--t-border);
+        border-radius: var(--radius-S);
+        background: var(--t-white);
+        font-size: 15px;
+        transition: border-color 0.2s;
+        margin-bottom: 10px;
+      }
+      .input-box:focus {
+        border-color: var(--t-blue);
+      }
+
+      /* TABS & HERO */
+      .hero-section {
+        text-align: center;
+        padding: 40px 0 60px;
+      }
+      .hero-title {
+        font-size: 36px;
+        font-weight: 800;
+        line-height: 1.3;
+        margin-bottom: 16px;
+        color: var(--t-text-main);
+      }
+      .search-wrapper {
+        background: var(--t-white);
+        padding: 24px;
+        border-radius: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .tabs {
+        background: var(--t-bg);
+        padding: 4px;
+        border-radius: 14px;
+        display: flex;
+        position: relative;
+        margin-bottom: 20px;
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        background: none;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--t-text-grey);
+        cursor: pointer;
+        z-index: 2;
+      }
+      .tab-btn.active {
+        color: var(--t-blue);
+      }
+      .tab-indicator {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        bottom: 4px;
+        width: calc(33.33% - 4px);
+        background: var(--t-white);
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        transition: transform 0.3s var(--ease);
+        z-index: 1;
+      }
+      .search-bar {
+        display: flex;
+        gap: 10px;
+      }
+
+      /* UTIL */
+      .flex-between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .flex-gap {
+        display: flex;
+        gap: 10px;
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        background: #f0f0f0;
+        color: #555;
+      }
+      .badge-blue {
+        background: #e8f3ff;
+        color: var(--t-blue);
+      }
+
+      /* ANIMATION */
+      .fade-enter-active,
+      .fade-leave-active {
+        transition: opacity 0.3s var(--ease);
+      }
+      .fade-enter-from,
+      .fade-leave-to {
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <div class="header-inner">
+          <router-link to="/" class="logo">부동산 AI</router-link>
+          <nav>
+            <router-link to="/">홈</router-link>
+            <router-link to="/realty">매물</router-link>
+            <router-link to="/board">커뮤니티</router-link>
+            <router-link to="/mypage" v-if="isLoggedIn">마이</router-link>
+            <a @click="logout" v-if="isLoggedIn">로그아웃</a>
+            <router-link to="/login" v-else>로그인</router-link>
+          </nav>
+        </div>
+      </header>
+
+      <div class="main-container">
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </div>
+    </div>
+
+    <script>
+      const { createApp, ref, reactive, computed, onMounted } = Vue;
+      const { createRouter, createWebHashHistory, useRoute, useRouter } = VueRouter;
+
+      /* =================================================================
+           1. MOCK DATABASE (데이터베이스 시뮬레이션)
+           ================================================================= */
+      const DB = reactive({
+        users: [{ id: 1, email: "test@test.com", password: "123", name: "김토스", age: 30, birthDate: "1994-01-01" }],
+        session: null, // 현재 로그인 유저
+        realties: [
+          {
+            id: 1,
+            name: "강남역 5분 풀옵션",
+            address: "서울시 강남구 역삼동",
+            price: 60,
+            type: "월세",
+            location: "강남",
+            deposit: 1000,
+          },
+          {
+            id: 2,
+            name: "한강뷰 테라스 아파트",
+            address: "서울시 서초구 반포동",
+            price: 200000,
+            type: "전세",
+            location: "서초",
+            deposit: 200000,
+          },
+          {
+            id: 3,
+            name: "대학가 신축 원룸",
+            address: "서울시 관악구 신림동",
+            price: 45,
+            type: "월세",
+            location: "관악",
+            deposit: 500,
+          },
+          {
+            id: 4,
+            name: "판교 테크노밸리 오피스텔",
+            address: "성남시 분당구 삼평동",
+            price: 120,
+            type: "월세",
+            location: "판교",
+            deposit: 3000,
+          },
+        ],
+        reviews: [],
+        favorites: [],
+        posts: [
+          {
+            id: 1,
+            title: "이 지역 치안 괜찮나요?",
+            content: "밤에 다니기 어떤가요?",
+            userId: 1,
+            viewCount: 10,
+            createdDate: "2024-11-28",
+          },
+          {
+            id: 2,
+            title: "전세 대출 금리 질문",
+            content: "중기청 되나요?",
+            userId: 1,
+            viewCount: 5,
+            createdDate: "2024-11-27",
+          },
+        ],
+        comments: [],
+        searchHistories: [],
+        ragHistories: [],
+      });
+
+      /* =================================================================
+           2. MOCK API CLIENT (API 명세서 구현)
+           ================================================================= */
+      const api = {
+        // [Auth] 사용자 관련
+        auth: {
+          // POST /api/users/login
+          login: async (email, password) => {
+            const user = DB.users.find((u) => u.email === email && u.password === password);
+            if (user) {
+              DB.session = user;
+              return { message: "로그인 성공" };
+            }
+            throw new Error("로그인 실패: 이메일 또는 비밀번호 확인");
+          },
+          // POST /api/users/logout
+          logout: async () => {
+            DB.session = null;
+            return { message: "로그아웃 성공" };
+          },
+          // POST /api/users/register
+          register: async (data) => {
+            DB.users.push({ id: Date.now(), ...data });
+            return { message: "회원가입 성공" };
+          },
+          // GET /api/users/profile
+          getProfile: async () => {
+            if (!DB.session) throw new Error("비로그인");
+            return { ...DB.session };
+          },
+          // PUT /api/users/profile
+          updateProfile: async (data) => {
+            if (!DB.session) throw new Error("비로그인");
+            const idx = DB.users.findIndex((u) => u.id === DB.session.id);
+            DB.users[idx] = { ...DB.users[idx], ...data };
+            DB.session = DB.users[idx];
+            return { message: "수정 성공" };
+          },
+          // GET /api/users/searchHistory
+          getHistory: async () => {
+            if (!DB.session) return [];
+            return DB.searchHistories.filter((h) => h.userId === DB.session.id);
+          },
+        },
+
+        // [Realty] 부동산 관련
+        realty: {
+          // GET /api/real-estate (Filter)
+          getList: async (params) => {
+            let res = DB.realties;
+            if (params.keyword)
+              res = res.filter((r) => r.name.includes(params.keyword) || r.location.includes(params.keyword));
+            return res;
+          },
+          // GET /api/real-estate/{id}
+          getDetail: async (id) => {
+            return DB.realties.find((r) => r.id == id);
+          },
+          // GET /api/real-estate/{id}/reviews
+          getReviews: async (id) => {
+            return DB.reviews
+              .filter((r) => r.realtyId == id)
+              .map((r) => {
+                const u = DB.users.find((u) => u.id === r.userId);
+                return { ...r, userName: u ? u.name : "익명" };
+              });
+          },
+          // POST /api/real-estate/{id}/rate
+          addReview: async (id, data) => {
+            // rating, text
+            if (!DB.session) throw new Error("로그인 필요");
+            DB.reviews.push({ id: Date.now(), realtyId: id, userId: DB.session.id, ...data });
+            return { message: "평점 등록 성공" };
+          },
+          // POST /api/real-estate/{id}/favorite
+          toggleFavorite: async (id) => {
+            if (!DB.session) throw new Error("로그인 필요");
+            const idx = DB.favorites.findIndex((f) => f.realtyId == id && f.userId == DB.session.id);
+            if (idx >= 0) {
+              DB.favorites.splice(idx, 1);
+              return { message: "찜 취소" };
+            } else {
+              DB.favorites.push({ id: Date.now(), realtyId: id, userId: DB.session.id });
+              return { message: "찜 성공" };
+            }
+          },
+          // POST /api/real-estate/compare
+          compare: async (realtyIds) => {
+            const targets = DB.realties.filter((r) => realtyIds.includes(r.id));
+            return { comparisons: targets };
+          },
+        },
+
+        // [Board] 게시판 관련
+        board: {
+          // GET /api/board/posts, GET /api/board/posts/filter, GET /api/board/posts/popular
+          getPosts: async (filterType, keyword) => {
+            let res = [...DB.posts];
+            if (filterType === "popular") res.sort((a, b) => b.viewCount - a.viewCount);
+            if (keyword) res = res.filter((p) => p.title.includes(keyword));
+            return res;
+          },
+          // GET /api/board/posts/{id}
+          getPost: async (id) => {
+            const p = DB.posts.find((p) => p.id == id);
+            const u = DB.users.find((u) => u.id === p.userId);
+            return { ...p, writerName: u ? u.name : "알수없음" };
+          },
+          // POST /api/board/posts
+          createPost: async (data) => {
+            if (!DB.session) throw new Error("로그인 필요");
+            DB.posts.unshift({
+              id: Date.now(),
+              userId: DB.session.id,
+              viewCount: 0,
+              createdDate: new Date().toLocaleDateString(),
+              ...data,
+            });
+            return { message: "게시물 생성 성공" };
+          },
+          // DELETE /api/board/posts/{id}
+          deletePost: async (id) => {
+            const idx = DB.posts.findIndex((p) => p.id == id);
+            if (idx > -1) DB.posts.splice(idx, 1);
+            return { message: "게시물 삭제 성공" };
+          },
+          // POST /api/board/posts/{id}/comments
+          addComment: async (id, content) => {
+            DB.comments.push({ id: Date.now(), postId: id, content, userId: DB.session.id });
+            return { message: "댓글 작성 성공" };
+          },
+          // Helper for comments
+          getComments: async (postId) => {
+            return DB.comments
+              .filter((c) => c.postId == postId)
+              .map((c) => {
+                const u = DB.users.find((user) => user.id === c.userId);
+                return { ...c, writerName: u ? u.name : "익명" };
+              });
+          },
+        },
+
+        // [RAG] AI 검색
+        rag: {
+          // GET /api/rag/find
+          find: async (findString) => {
+            // 시뮬레이션: 검색어 저장
+            if (DB.session) {
+              DB.searchHistories.push({
+                id: Date.now(),
+                userId: DB.session.id,
+                text: findString,
+                createdDate: new Date().toLocaleString(),
+              });
+            }
+
+            // 더미 응답 생성
+            const answer = `"${findString}"에 대한 AI 분석 결과입니다.\n해당 지역은 최근 실거래가가 상승 추세이며, 교통 호재가 예상됩니다. 추천 매물은 3건 있습니다.`;
+
+            // 기록 저장 (findList용)
+            DB.ragHistories.push({ query: findString, answer, date: new Date().toLocaleTimeString() });
+
+            return { message: "분석 완료", answer };
+          },
+          // GET /api/rag/findList
+          findList: async () => {
+            return { list: DB.ragHistories };
+          },
+        },
+      };
+
+      /* =================================================================
+           3. COMPONENTS (화면)
+           ================================================================= */
+
+      // [HOME] 탭: 동별/아파트별/AI검색
+      const Home = {
+        setup() {
+          const router = useRouter();
+          const currentTab = ref(0); // 0:동, 1:아파트, 2:AI(RAG)
+          const searchText = ref("");
+          const ragResult = ref("");
+
+          const placeholders = ["동 이름 (예: 역삼동)", "아파트 이름 (예: 자이)", "AI에게 무엇이든 물어보세요"];
+
+          const handleSearch = async () => {
+            if (!searchText.value) return;
+
+            if (currentTab.value === 2) {
+              // RAG 검색 실행
+              ragResult.value = "AI가 분석중입니다...";
+              const res = await api.rag.find(searchText.value);
+              ragResult.value = res.answer;
+            } else {
+              // 일반 검색 -> 매물 리스트로 이동
+              router.push({ path: "/realty", query: { q: searchText.value } });
+            }
+          };
+
+          return { currentTab, searchText, placeholders, handleSearch, ragResult };
+        },
+        template: `
+                <div class="hero-section">
+                    <h1 class="hero-title">실거래 데이터 기반<br>부동산 AI 플랫폼</h1>
+                    
+                    <div class="search-wrapper">
+                        <div class="tabs">
+                            <div class="tab-indicator" :style="{ transform: \`translateX(\${currentTab * 100}%)\` }"></div>
+                            <button class="tab-btn" :class="{active: currentTab===0}" @click="currentTab=0; ragResult=''">동별</button>
+                            <button class="tab-btn" :class="{active: currentTab===1}" @click="currentTab=1; ragResult=''">아파트별</button>
+                            <button class="tab-btn" :class="{active: currentTab===2}" @click="currentTab=2">AI 검색</button>
+                        </div>
+                        
+                        <div class="search-bar">
+                            <input v-model="searchText" type="text" :placeholder="placeholders[currentTab]" @keyup.enter="handleSearch">
+                            <button class="btn" @click="handleSearch">검색</button>
+                        </div>
+
+                        <div v-if="currentTab === 2 && ragResult" style="margin-top:20px; text-align:left; background:#f9f9f9; padding:15px; border-radius:12px; white-space:pre-wrap;">
+                            <strong>🤖 AI 답변:</strong><br>{{ ragResult }}
+                        </div>
+                    </div>
+                </div>
+            `,
+      };
+
+      // [REALTY LIST & COMPARE]
+      const RealtyList = {
+        setup() {
+          const route = useRoute();
+          const router = useRouter();
+          const items = ref([]);
+          const compareList = ref([]); // 비교함 담긴 ID들
+          const showCompareModal = ref(false);
+          const compareResult = ref([]);
+
+          onMounted(async () => {
+            items.value = await api.realty.getList({ keyword: route.query.q });
+          });
+
+          const toggleCompare = (id) => {
+            if (compareList.value.includes(id)) compareList.value = compareList.value.filter((i) => i !== id);
+            else {
+              if (compareList.value.length >= 2) alert("비교는 최대 2개까지 가능합니다.");
+              else compareList.value.push(id);
+            }
+          };
+
+          const doCompare = async () => {
+            if (compareList.value.length < 2) return alert("2개를 선택해주세요");
+            const res = await api.realty.compare(compareList.value);
+            compareResult.value = res.comparisons;
+            showCompareModal.value = true;
+          };
+
+          return { items, compareList, toggleCompare, doCompare, showCompareModal, compareResult, router };
+        },
+        template: `
+                <div>
+                    <div class="flex-between" style="margin-bottom:20px;">
+                        <h2>🏢 매물 목록</h2>
+                        <button v-if="compareList.length > 0" class="btn btn-sm" @click="doCompare">
+                            비교하기 ({{ compareList.length }})
+                        </button>
+                    </div>
+
+                    <div v-for="item in items" :key="item.id" class="card hoverable" @click="router.push('/realty/'+item.id)">
+                        <div class="flex-between">
+                            <h3>{{ item.name }}</h3>
+                            <input type="checkbox" @click.stop="toggleCompare(item.id)" :checked="compareList.includes(item.id)">
+                        </div>
+                        <p>📍 {{ item.address }}</p>
+                        <p style="color:var(--t-blue); font-weight:bold;">{{ item.price }}만원 / {{ item.type }}</p>
+                    </div>
+
+                    <div v-if="showCompareModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; display:flex; justify-content:center; align-items:center;">
+                        <div class="card" style="width:90%; max-width:500px;">
+                            <h3>⚖️ 매물 비교 결과</h3>
+                            <div style="display:flex; gap:10px; margin-top:20px;">
+                                <div v-for="c in compareResult" :key="c.id" style="flex:1; background:#f0f0f0; padding:10px; border-radius:8px;">
+                                    <h4>{{ c.name }}</h4>
+                                    <p>{{ c.price }}만원</p>
+                                    <p>{{ c.type }}</p>
+                                </div>
+                            </div>
+                            <button class="btn" style="width:100%; margin-top:20px;" @click="showCompareModal=false">닫기</button>
+                        </div>
+                    </div>
+                </div>
+            `,
+      };
+
+      // [REALTY DETAIL]
+      const RealtyDetail = {
+        setup() {
+          const route = useRoute();
+          const item = ref({});
+          const reviews = ref([]);
+          const newReview = reactive({ rating: 5, text: "" });
+
+          const load = async () => {
+            const id = route.params.id;
+            item.value = await api.realty.getDetail(id);
+            reviews.value = await api.realty.getReviews(id);
+          };
+          onMounted(load);
+
+          const addFav = async () => {
+            try {
+              const res = await api.realty.toggleFavorite(item.value.id);
+              alert(res.message);
+            } catch (e) {
+              alert(e.message);
+            }
+          };
+
+          const submitReview = async () => {
+            try {
+              await api.realty.addReview(item.value.id, newReview);
+              alert("리뷰 등록 완료");
+              newReview.text = "";
+              load();
+            } catch (e) {
+              alert(e.message);
+            }
+          };
+
+          return { item, reviews, newReview, addFav, submitReview };
+        },
+        template: `
+                <div v-if="item.id">
+                    <div class="card">
+                        <span class="badge badge-blue">{{ item.type }}</span>
+                        <h2 style="margin:10px 0;">{{ item.name }}</h2>
+                        <p style="font-size:16px;">{{ item.address }}</p>
+                        <h1 style="color:var(--t-blue); margin: 20px 0;">{{ item.price }}만원</h1>
+                        <div class="flex-gap">
+                            <button class="btn" style="flex:1" @click="addFav">❤️ 찜하기</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>⭐ 리뷰 및 평점</h3>
+                        <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:15px;">
+                            <select v-model="newReview.rating" style="padding:5px; margin-right:5px;">
+                                <option value="5">5점</option><option value="4">4점</option><option value="3">3점</option>
+                            </select>
+                            <input v-model="newReview.text" placeholder="리뷰 내용을 입력하세요" style="width:70%; padding:5px;">
+                            <button @click="submitReview" class="btn btn-sm" style="margin-left:5px;">등록</button>
+                        </div>
+                        <div v-for="r in reviews" :key="r.id" style="margin-bottom:10px;">
+                            <strong>{{ r.userName }}</strong> ({{ r.rating }}점): {{ r.text }}
+                        </div>
+                    </div>
+                </div>
+            `,
+      };
+
+      // [BOARD]
+      const Board = {
+        setup() {
+          const posts = ref([]);
+          const mode = ref("list"); // list, write
+          const form = reactive({ title: "", content: "" });
+          const filter = ref("");
+
+          const loadPosts = async () => {
+            posts.value = await api.board.getPosts("all", filter.value);
+          };
+          const loadPopular = async () => {
+            posts.value = await api.board.getPosts("popular");
+          };
+
+          onMounted(loadPosts);
+
+          const savePost = async () => {
+            try {
+              await api.board.createPost(form);
+              alert("등록되었습니다.");
+              mode.value = "list";
+              loadPosts();
+            } catch (e) {
+              alert(e.message);
+            }
+          };
+
+          const deletePost = async (id) => {
+            if (confirm("삭제하시겠습니까?")) {
+              await api.board.deletePost(id);
+              loadPosts();
+            }
+          };
+
+          return { posts, mode, form, filter, loadPosts, loadPopular, savePost, deletePost };
+        },
+        template: `
+                <div>
+                    <div v-if="mode==='list'">
+                        <div class="flex-between" style="margin-bottom:15px;">
+                            <h2>📢 게시판</h2>
+                            <button class="btn btn-sm" @click="mode='write'">글쓰기</button>
+                        </div>
+                        <div class="flex-gap" style="margin-bottom:15px;">
+                            <input v-model="filter" class="input-box" placeholder="검색어" style="margin-bottom:0;">
+                            <button class="btn btn-sm btn-secondary" @click="loadPosts">검색</button>
+                            <button class="btn btn-sm btn-secondary" @click="loadPopular">인기글</button>
+                        </div>
+
+                        <div v-for="p in posts" :key="p.id" class="card hoverable" @click="$router.push('/board/'+p.id)">
+                            <h3>{{ p.title }}</h3>
+                            <p>조회 {{ p.viewCount }} · {{ p.createdDate }}</p>
+                            <button class="btn btn-sm btn-danger" style="margin-top:10px;" @click.stop="deletePost(p.id)">삭제</button>
+                        </div>
+                    </div>
+
+                    <div v-if="mode==='write'">
+                        <h2>새 글 작성</h2>
+                        <input v-model="form.title" class="input-box" placeholder="제목">
+                        <textarea v-model="form.content" class="input-box" rows="5" placeholder="내용"></textarea>
+                        <div class="flex-gap">
+                            <button class="btn" @click="savePost">등록</button>
+                            <button class="btn btn-secondary" @click="mode='list'">취소</button>
+                        </div>
+                    </div>
+                </div>
+            `,
+      };
+
+      // [POST DETAIL]
+      const PostDetail = {
+        setup() {
+          const route = useRoute();
+          const post = ref({});
+          const comments = ref([]);
+          const commentText = ref("");
+
+          const load = async () => {
+            post.value = await api.board.getPost(route.params.id);
+            comments.value = await api.board.getComments(route.params.id);
+          };
+          onMounted(load);
+
+          const addComment = async () => {
+            await api.board.addComment(post.value.id, commentText.value);
+            commentText.value = "";
+            load();
+          };
+
+          return { post, comments, commentText, addComment };
+        },
+        template: `
+                <div v-if="post.id">
+                    <div class="card">
+                        <h2>{{ post.title }}</h2>
+                        <p>작성자: {{ post.writerName }}</p>
+                        <hr style="margin:15px 0; border:0; border-top:1px solid #eee;">
+                        <p style="white-space:pre-wrap;">{{ post.content }}</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>댓글 ({{ comments.length }})</h3>
+                        <div class="flex-gap" style="margin-bottom:15px;">
+                            <input v-model="commentText" class="input-box" placeholder="댓글 작성" style="margin:0;">
+                            <button class="btn btn-sm" @click="addComment">등록</button>
+                        </div>
+                        <div v-for="c in comments" :key="c.id" style="border-bottom:1px solid #eee; padding:10px 0;">
+                            <strong>{{ c.writerName }}</strong>: {{ c.content }}
+                        </div>
+                    </div>
+                </div>
+            `,
+      };
+
+      // [MY PAGE]
+      const MyPage = {
+        setup() {
+          const profile = reactive({});
+          const histories = ref([]);
+          const editMode = ref(false);
+
+          onMounted(async () => {
+            try {
+              const data = await api.auth.getProfile();
+              Object.assign(profile, data);
+              histories.value = await api.auth.getHistory();
+            } catch (e) {
+              alert("로그인이 필요합니다.");
+            }
+          });
+
+          const saveProfile = async () => {
+            await api.auth.updateProfile(profile);
+            alert("수정되었습니다.");
+            editMode.value = false;
+          };
+
+          return { profile, histories, editMode, saveProfile };
+        },
+        template: `
+                <div>
+                    <div class="card">
+                        <div class="flex-between">
+                            <h2>👤 내 프로필</h2>
+                            <button class="btn btn-sm" @click="editMode = !editMode">{{ editMode ? '취소' : '수정' }}</button>
+                        </div>
+                        <div v-if="!editMode">
+                            <p><strong>이름:</strong> {{ profile.name }}</p>
+                            <p><strong>이메일:</strong> {{ profile.email }}</p>
+                            <p><strong>나이:</strong> {{ profile.age }}</p>
+                            <p><strong>생년월일:</strong> {{ profile.birthDate }}</p>
+                        </div>
+                        <div v-else style="margin-top:10px;">
+                            <input v-model="profile.name" class="input-box" placeholder="이름">
+                            <input v-model="profile.age" class="input-box" placeholder="나이">
+                            <input v-model="profile.birthDate" class="input-box" placeholder="생년월일">
+                            <button class="btn" style="width:100%" @click="saveProfile">저장하기</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🕐 최근 검색 기록 ({{ histories.length }})</h3>
+                        <ul>
+                            <li v-for="h in histories" :key="h.id" style="padding:5px 0; color:#555;">
+                                {{ h.text }} <small style="color:#aaa;">({{ h.createdDate }})</small>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+      };
+
+      // [AUTH]
+      const Login = {
+        setup() {
+          const router = useRouter();
+          const form = reactive({ email: "", password: "", name: "", age: "", birthDate: "" });
+          const isRegister = ref(false);
+
+          const submit = async () => {
+            try {
+              if (isRegister.value) {
+                await api.auth.register(form);
+                alert("가입 완료! 로그인해주세요.");
+                isRegister.value = false;
+              } else {
+                await api.auth.login(form.email, form.password);
+                alert("로그인 성공!");
+                router.push("/");
+              }
+            } catch (e) {
+              alert(e.message);
+            }
+          };
+
+          return { form, isRegister, submit };
+        },
+        template: `
+                <div style="max-width:400px; margin:0 auto; padding-top:40px;">
+                    <h2 style="text-align:center; margin-bottom:20px;">{{ isRegister ? '회원가입' : '로그인' }}</h2>
+                    <input v-model="form.email" class="input-box" placeholder="이메일">
+                    <input v-model="form.password" type="password" class="input-box" placeholder="비밀번호">
+                    
+                    <div v-if="isRegister">
+                        <input v-model="form.name" class="input-box" placeholder="이름">
+                        <input v-model="form.age" class="input-box" placeholder="나이">
+                        <input v-model="form.birthDate" class="input-box" placeholder="생년월일 (YYYY-MM-DD)">
+                    </div>
+
+                    <button class="btn" style="width:100%; margin-top:10px;" @click="submit">
+                        {{ isRegister ? '가입하기' : '로그인' }}
+                    </button>
+                    <p style="text-align:center; margin-top:20px; color:#888; cursor:pointer;" @click="isRegister = !isRegister">
+                        {{ isRegister ? '이미 계정이 있으신가요?' : '회원가입 하기' }}
+                    </p>
+                </div>
+            `,
+      };
+
+      /* =================================================================
+           4. APP CONFIG
+           ================================================================= */
+      const app = createApp({
+        setup() {
+          const router = useRouter();
+          const isLoggedIn = computed(() => !!DB.session);
+          const logout = async () => {
+            await api.auth.logout();
+            alert("로그아웃 되었습니다.");
+            router.push("/login");
+          };
+          return { isLoggedIn, logout };
+        },
+      });
+
+      const router = createRouter({
+        history: createWebHashHistory(),
+        routes: [
+          { path: "/", component: Home },
+          { path: "/realty", component: RealtyList },
+          { path: "/realty/:id", component: RealtyDetail },
+          { path: "/board", component: Board },
+          { path: "/board/:id", component: PostDetail },
+          { path: "/mypage", component: MyPage },
+          { path: "/login", component: Login },
+        ],
+      });
+
+      app.use(router);
+      app.mount("#app");
+    </script>
+  </body>
+</html>

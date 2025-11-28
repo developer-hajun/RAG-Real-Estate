@@ -20,8 +20,8 @@ public class CommentService {
         return commentMapper.selectPostByID(postId);
     }
 
-    public int insertComment(Comment comment,int postId,int UserId) {
-        return commentMapper.insertComment(comment,postId,UserId);
+    public int insertComment(Comment comment,int postId,int UserId ,int parentCommentId) {
+        return commentMapper.insertComment(comment,postId,UserId,parentCommentId);
     }
 
     public int updateComment(Comment comment) {
