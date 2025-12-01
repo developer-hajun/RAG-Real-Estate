@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,6 +17,7 @@ public class Post {
     private String title;
     private String text;
     private User user;
+    private List<Comment> commentList;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 }

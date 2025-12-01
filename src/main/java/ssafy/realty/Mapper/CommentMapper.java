@@ -1,6 +1,7 @@
 package ssafy.realty.Mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import ssafy.realty.Entity.Comment;
 
 import java.util.List;
@@ -14,7 +15,10 @@ public interface CommentMapper {
 
     int updateComment(Comment comment);
 
-    int insertComment(Comment comment,int postId,int UserId,int parentCommentId);
+    int insertComment(@Param("comment") Comment comment,
+                      @Param("postId") int postId,
+                      @Param("userId") int userId,
+                      @Param("parentCommentId") int parentCommentId);
 
     int deleteComment(Integer commentId);
 
