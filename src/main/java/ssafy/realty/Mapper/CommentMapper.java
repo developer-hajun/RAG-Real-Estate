@@ -3,7 +3,6 @@ package ssafy.realty.Mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import ssafy.realty.Entity.Comment;
-
 import java.util.List;
 
 @Mapper
@@ -11,7 +10,8 @@ public interface CommentMapper {
 
     List<Comment> selectCommentsByUserId(Integer userId);
 
-    List<Comment> selectPostByID(Integer postId);
+    // XML에서 #{postId}로 받기 위해 @Param 추가
+    List<Comment> selectPostByID(@Param("postId") Integer postId);
 
     int updateComment(Comment comment);
 
@@ -21,6 +21,4 @@ public interface CommentMapper {
                       @Param("parentCommentId") int parentCommentId);
 
     int deleteComment(Integer commentId);
-
-
 }

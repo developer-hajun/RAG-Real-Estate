@@ -1,11 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ssafy.realty.Mapper.PostMapper">
 
     <resultMap id="PostDetailMap" type="ssafy.realty.Entity.Post">
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="text" column="text"/>
-        <result property="createdDate" column="created_date"/>
-        <result property="updatedDate" column="updated_date"/>
+        <result property="createdDate" column="createdDate"/>
+        <result property="updatedDate" column="updatedDate"/>
 
         <association property="user" javaType="ssafy.realty.Entity.User">
             <id property="id" column="user_id"/>
@@ -16,7 +18,7 @@
                     select="ssafy.realty.Mapper.CommentMapper.selectPostByID"/>
     </resultMap>
 
-    <select id="deatilPost" resultMap="PostDetailMap">
+    <select id="detailPost" resultMap="PostDetailMap">
         SELECT * FROM Post WHERE id = #{id}
     </select>
 
@@ -29,15 +31,27 @@
     </select>
 
     <insert id="insertPost" parameterType="ssafy.realty.Entity.Post" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO Post (title, text, user_id, createdDate, updatedDate)
-        VALUES (#{title}, #{text}, #{user.id}, NOW(), NOW())
+        INSERT INTO Post (
+            title,
+            text,
+            user_id,
+            createdDate,
+            updatedDate
+        )
+        VALUES (
+                   #{title},
+                   #{text},
+                   #{user.id},
+                   NOW(),
+                   NOW()
+               )
     </insert>
 
     <update id="updatePost" parameterType="ssafy.realty.Entity.Post">
         UPDATE Post
         SET title = #{title},
-        text = #{text},
-        updatedDate = NOW()
+            text = #{text},
+            updatedDate = NOW()
         WHERE id = #{id}
     </update>
 

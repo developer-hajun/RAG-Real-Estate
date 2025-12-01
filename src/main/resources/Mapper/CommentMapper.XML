@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ssafy.realty.Mapper.CommentMapper">
 
     <resultMap id="CommentResultMap" type="ssafy.realty.Entity.Comment">
@@ -14,29 +16,30 @@
         </collection>
     </resultMap>
 
-    <select id = "selectCommentsByUserId" resultType="ssafy.realty.Entity.Comment">
-        select * from Comment a where a.user_id=#{userId};
+    <select id="selectCommentsByUserId" resultType="ssafy.realty.Entity.Comment">
+        SELECT * FROM Comment WHERE user_id = #{userId}
     </select>
 
     <select id="selectPostByID" resultMap="CommentResultMap">
         SELECT
-        a.id            AS a_id,
-        a.content       AS a_content,
-        a.createdDate  AS a_created_date,
-        a.updatedDate  AS a_updated_date,
-        b.id            AS b_id,
-        b.content       AS b_content,
-        b.createdDate  AS b_created_date,
-        b.updatedDate  AS b_updated_date
+            a.id               AS a_id,
+            a.content          AS a_content,
+            a.createdDate      AS a_created_date,
+            a.updatedDate      AS a_updated_date,
+            b.id               AS b_id,
+            b.content          AS b_content,
+            b.createdDate      AS b_created_date,
+            b.updatedDate      AS b_updated_date
         FROM Comment a
-        LEFT JOIN Comment b ON a.id = b.parentComment_id
-        WHERE a.post_id = #{id}  AND a.parentComment_id IS NULL -- (보통 최상위 댓글만 가져오고 join으로 대댓글 붙임)
+                 LEFT JOIN Comment b ON a.id = b.parentComment_id
+        WHERE a.post_id = #{postId}
+          AND a.parentComment_id IS NULL
     </select>
 
     <update id="updateComment" parameterType="ssafy.realty.Entity.Comment">
         UPDATE Comment
         SET content = #{content},
-            updatedDate = #{updatedDate}
+            updatedDate = NOW()
         WHERE id = #{id}
     </update>
 
@@ -49,8 +52,7 @@
         updatedDate,
         parentComment_id
         )
-        VALUES
-        (
+        VALUES (
         #{postId},
         #{userId},
         #{comment.content},
@@ -62,8 +64,7 @@
     </insert>
 
     <delete id="deleteComment">
-        DELETE FROM Comment
-        WHERE id = #{commentId}
+        DELETE FROM Comment WHERE id = #{commentId}
     </delete>
-</mapper>
 
+</mapper>
