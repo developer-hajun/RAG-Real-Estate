@@ -67,4 +67,5 @@
         DELETE FROM Comment WHERE id = #{commentId}
     </delete>
 
+
 </mapper>

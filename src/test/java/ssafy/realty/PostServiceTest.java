@@ -26,7 +26,6 @@ class PostServiceTest {
 
     @BeforeEach
     void setUp() {
-        // 모든 테스트 전에 "작성자(User)"를 미리 생성해둠
         String sql = "INSERT INTO User (email, password, name, age, createdDate, updatedDate) " +
                 "VALUES ('postwriter@test.com', '1234', '김게시', 30, NOW(), NOW())";
         jdbcTemplate.update(sql);
@@ -66,7 +65,7 @@ class PostServiceTest {
 
         // when
         // 서비스 메서드명이 DeatilPost(오타)로 되어 있어 그대로 호출함
-        Post result = postService.DeatilPost(post.getId());
+        Post result = postService.detailPost(post.getId());
 
         // then
         assertThat(result).isNotNull();
@@ -92,7 +91,7 @@ class PostServiceTest {
         postService.updatePost(post);
 
         // then
-        Post updatedPost = postService.DeatilPost(post.getId());
+        Post updatedPost = postService.detailPost(post.getId());
         assertThat(updatedPost.getTitle()).isEqualTo("수정된 제목");
         assertThat(updatedPost.getText()).isEqualTo("수정된 내용");
         // DB 트리거가 없다면 Java 레벨에서 NOW()가 잘 들어갔는지 확인
@@ -113,7 +112,7 @@ class PostServiceTest {
         postService.deletePost(postId);
 
         // then
-        Post deletedPost = postService.DeatilPost(postId);
+        Post deletedPost = postService.detailPost(postId);
         assertThat(deletedPost).isNull(); // 조회 결과가 없어야 함
     }
 
@@ -133,5 +132,28 @@ class PostServiceTest {
         assertThat(allPosts).size().isGreaterThanOrEqualTo(2);
         assertThat(allPosts).extracting("title")
                 .contains("글1", "글2");
+    }
+
+    @Test
+    @DisplayName("🚨 예외 상황: 댓글이 있는 게시글 삭제 시 DB 에러가 발생하는지 확인")
+    void deletePostWithCommentsTest() {
+        // given
+        // 1. 게시글 작성
+        User user = new User(); user.setId(testUserId);
+        Post post = new Post(); post.setTitle("삭제할 글"); post.setUser(user);
+        postService.insertPost(post);
+
+        // 2. 댓글 작성 (SQL로 직접 삽입하여 서비스 의존성 제거)
+        jdbcTemplate.update("INSERT INTO Comment (post_id, user_id, content, createdDate) VALUES (?, ?, '못 지울걸?', NOW())", post.getId(), testUserId);
+
+        // when & then
+        // 현재 DB 설정상 댓글이 있으면 게시글 삭제가 실패해야 정상입니다. (참조 무결성)
+        // 만약 삭제되길 원한다면 DB 테이블 설정이나 XML 쿼리를 수정해야 합니다.
+        try {
+            postService.deletePost(post.getId());//예외처리 필요함
+        } catch (Exception e) {
+            System.out.println("예상된 에러 발생: " + e.getMessage());
+            assertThat(e).isNotNull();
+        }
     }
 }

@@ -36,7 +36,7 @@ public class PostController {
     }
     @GetMapping("/{PostId}")
     public ResponseEntity<ResponseDto<?>> selectDetail(int PostId) {
-        Post post = postService.DeatilPost(PostId);
+        Post post = postService.detailPost(PostId);
         return ResponseEntity.ok(ResponseDto.create(HttpStatus.OK.value(), "게시물의 상세정보를 조회했습니다.",post));
     }
     @PatchMapping
