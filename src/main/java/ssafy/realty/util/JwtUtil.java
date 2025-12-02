@@ -20,6 +20,7 @@ public class JwtUtil {
     }
 
     //JWT를 생성
+    //우린 userId가 PK인데 setSubject를 email로 하는게 옳은가 ?
     public String generateToken(String email, int userId) {
 
         return Jwts.builder() // JWT 빌더 시작 Jwts 클래스는 JWT 관련 기능 제공, builder()는 JWT의 구성요소를 설정할 수 있는 '객체'를 반환함
