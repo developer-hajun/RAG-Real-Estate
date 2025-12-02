@@ -1,6 +1,6 @@
-package ssafy.realty.Exception;
+package ssafy.realty.Exception.post;
 
-import static ssafy.realty.Exception.PostExceptionList.POST_NOT_FOUND;
+import static ssafy.realty.Exception.post.PostExceptionList.POST_NOT_FOUND;
 
 public class PostNotFoundException extends PostException {
     public PostNotFoundException(String error ) {

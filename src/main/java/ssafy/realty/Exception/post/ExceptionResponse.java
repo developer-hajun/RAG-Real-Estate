@@ -1,4 +1,4 @@
-package ssafy.realty.Exception;
+package ssafy.realty.Exception.post;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

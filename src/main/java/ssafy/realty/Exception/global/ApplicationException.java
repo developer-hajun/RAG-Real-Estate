@@ -1,4 +1,4 @@
-package ssafy.realty.Exception;
+package ssafy.realty.Exception.global;
 
 import org.springframework.http.HttpStatus;
 

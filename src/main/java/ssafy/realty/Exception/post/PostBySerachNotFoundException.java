@@ -1,6 +1,6 @@
-package ssafy.realty.Exception;
+package ssafy.realty.Exception.post;
 
-import static ssafy.realty.Exception.PostExceptionList.POST_BY_SEARCH_NOT_FOUND;
+import static ssafy.realty.Exception.post.PostExceptionList.POST_BY_SEARCH_NOT_FOUND;
 
 public class PostBySerachNotFoundException extends PostException {
     public PostBySerachNotFoundException() {

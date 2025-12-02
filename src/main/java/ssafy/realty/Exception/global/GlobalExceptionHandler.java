@@ -1,8 +1,9 @@
-package ssafy.realty.Exception;
+package ssafy.realty.Exception.global;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ssafy.realty.Exception.post.ExceptionResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

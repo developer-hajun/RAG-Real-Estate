@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ssafy.realty.Entity.Post;
-import ssafy.realty.Exception.DatabaseOperationException;
-import ssafy.realty.Exception.PostNotFoundException;
+import ssafy.realty.Exception.global.DatabaseOperationException;
+import ssafy.realty.Exception.post.PostNotFoundException;
 import ssafy.realty.Mapper.PostMapper;
 
 
@@ -29,7 +29,12 @@ public class PostService {
 
 
     public List<Post> selectAll() {
-        return postMapper.selectAll();
+        try{
+            return postMapper.selectAll();
+        }
+        catch(Exception e){
+            throw new DatabaseOperationException();
+        }
     }
 
 

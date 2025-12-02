@@ -3,6 +3,8 @@ package ssafy.realty.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ssafy.realty.Entity.Comment;
+import ssafy.realty.Exception.comment.CommentNotFoundException;
+import ssafy.realty.Exception.global.DatabaseOperationException;
 import ssafy.realty.Mapper.CommentMapper;
 
 import java.util.List;
@@ -13,24 +15,39 @@ public class CommentService {
     private final CommentMapper commentMapper;
 
     public List<Comment> findByUserId(Integer userId) {
-        return commentMapper.selectCommentsByUserId(userId);
-    }
+        try{
+            return commentMapper.selectCommentsByUserId(userId);
+        }
+        catch (Exception e){
+            throw new DatabaseOperationException();
+        }
 
-    public List<Comment> findByPostId(Integer postId) {
-        return commentMapper.selectPostByID(postId);
     }
 
     public int insertComment(Comment comment,int postId,int UserId ,int parentCommentId) {
-        return commentMapper.insertComment(comment,postId,UserId,parentCommentId);
+
+        int val =  commentMapper.insertComment(comment,postId,UserId,parentCommentId);
+        if(val==0){
+            throw new DatabaseOperationException();
+        }
+        return val;
     }
 
     public int updateComment(Comment comment) {
-        return commentMapper.updateComment(comment);
+        int val = commentMapper.updateComment(comment);
+        if(val==0){
+            throw new CommentNotFoundException();
+        }
+        return val;
     }
 
     public
     int deleteComment(Integer commentId) {
-        return commentMapper.deleteComment(commentId);
+        int val = commentMapper.deleteComment(commentId);
+        if(val==0){
+            throw new CommentNotFoundException();
+        }
+        return val;
     }
 
 
