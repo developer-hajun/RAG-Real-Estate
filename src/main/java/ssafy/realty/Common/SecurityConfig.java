@@ -44,7 +44,7 @@ public class SecurityConfig {
 
     // 보안 필터 체인을 구성하는 메서드이며 HttpSecurity를 주입 받는다 .
     @Bean
-    public SecurityFilterChain springSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()) // CSRF(Cross-site Request Forgery) 보호 기능을 비활성화 한다(일반적으로 REST API에서 JWT를 사용할 떄).
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS(Cross-Origin Resource Sharing) 설정을 적용하고 corsConfigurationSource()메서드를 사용하도록 지정
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리를 설정하며 STATELESS(무상태)로 설정하여 세션을 사용하지 않음을 명시함
