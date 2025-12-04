@@ -10,12 +10,12 @@ import ssafy.realty.Entity.Comment;
 import ssafy.realty.Entity.Post;
 import ssafy.realty.Mapper.PostMapper;
 import ssafy.realty.Service.PostService;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
-@Controller
+@RestController
 @RequestMapping("/api/post")
 @RequiredArgsConstructor
 public class PostController {
@@ -23,7 +23,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<ResponseDto<?>> createPost(Post post) {
+    public ResponseEntity<ResponseDto<?>> createPost(@RequestBody Post post) {
         postService.insertPost(post);//추후 JWT안에 정보로 대체 예정
         return ResponseEntity.ok(ResponseDto.create(CREATED.value(), "게시글을 생성 했습니다."));
     }
