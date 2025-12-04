@@ -1,11 +1,9 @@
 package ssafy.realty.Service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
 import ssafy.realty.Entity.User;
 import ssafy.realty.Mapper.UserMapper;
 import ssafy.realty.util.JwtUtil;
@@ -22,11 +20,13 @@ public class UserService {
 
     private final JwtUtil jwtUtil;
 
+    private final PasswordEncoder passwordEncoder ;
+
     // login 기능
     public Map<String, Object> login(User user) {
         User loginUser = userMapper.findByEmail(user.getEmail());
 
-        if(loginUser == null){
+        if(loginUser == null||!passwordEncoder.matches(user.getPassword(), loginUser.getPassword())){
             throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
