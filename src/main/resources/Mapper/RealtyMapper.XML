@@ -2,7 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ssafy.realty.Mapper.RealtyMapper">
 
-    <select id="selectAllRealty" resultType="ssafy.realty.Entity.Realty">
-        select * from Realty;
+    <resultMap id="RealtyResultMap" type="ssafy.realty.Entity.Realty">
+        <id property="id" column="id" />
+
+        <result property="name" column="name" />
+        <result property="address" column="address" />
+
+        <result property="e_price" column="e_price" />
+        <result property="month_price" column="month_price" />
+        <result property="x_coordinate" column="x_coordinate" />
+        <result property="y_coordinate" column="y_coordinate" />
+
+    </resultMap>
+
+    <select id="selectAllRealty" resultMap="RealtyResultMap">
+        SELECT * FROM Realty
     </select>
+
+    <select id="selectRealtyListByIds" resultMap="RealtyResultMap">
+        SELECT * FROM Realty
+        WHERE id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>

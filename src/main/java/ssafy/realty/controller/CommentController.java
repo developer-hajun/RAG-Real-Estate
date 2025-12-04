@@ -29,11 +29,6 @@ public class CommentController {
         commentService.insertComment(comment,postId,UserId,parentCommentId);
         return ResponseEntity.ok(ResponseDto.create(CREATED.value(), "댓글 객체를 생성 했습니다."));
     }
-    @GetMapping("/post/{id}")
-    public ResponseEntity<ResponseDto<?>> postComment(int PostId) {
-        List<Comment> byPostId = commentService.findByPostId(PostId);
-        return ResponseEntity.ok(ResponseDto.create(HttpStatus.OK.value(), "게시물의 댓글을 조회했습니다.",byPostId));
-    }
     @GetMapping("/user/{id}")
     public ResponseEntity<ResponseDto<?>> userComment(int UserId) {
         List<Comment> byUserId = commentService.findByUserId(UserId);
@@ -45,7 +40,7 @@ public class CommentController {
         return ResponseEntity.ok(ResponseDto.create(HttpStatus.OK.value(), "댓글 객체를 삭제 했습니다."));
     }
 
-    @PatchMapping("/{commentId}")
+    @PatchMapping()
     public ResponseEntity<ResponseDto<?>> updateComment(Comment comment) {
         commentService.updateComment(comment);
         return ResponseEntity.ok(ResponseDto.create(HttpStatus.OK.value(), "댓글 객체를 수정 했습니다."));

@@ -1,5 +1,6 @@
 package ssafy.realty.Common; // 패키지명 확인
 
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -12,5 +13,9 @@ public class AiConfig {
     @Bean
     public VectorStore vectorStore(EmbeddingModel embeddingModel) {
         return SimpleVectorStore.builder(embeddingModel).build();
+    }
+    @Bean
+    public ChatClient chatClient(ChatClient.Builder chatClientBuilder){
+        return chatClientBuilder.build();
     }
 }

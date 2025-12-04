@@ -21,10 +21,11 @@ public class RealtyDocumentConverter {
     private final RealtyMapper realtyMapper;
     private final VectorStore vectorStore;
 
-    private static final int BATCH_SIZE = 100;
+    private static final int BATCH_SIZE = 10;
 
     public void convertAndUploadAll() {
         List<Realty> realities = realtyMapper.selectAllRealty();
+
         log.info("총 {}개의 매물 데이터를 조회했습니다.", realities.size());
 
         List<Document> documentBatch = new ArrayList<>();
@@ -35,6 +36,7 @@ public class RealtyDocumentConverter {
             if (documentBatch.size() >= BATCH_SIZE || i == realities.size() - 1) {
                 uploadBatch(documentBatch);
                 documentBatch.clear();
+                break;
             }
         }
 

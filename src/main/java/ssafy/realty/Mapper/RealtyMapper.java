@@ -9,4 +9,6 @@ import java.util.List;
 public interface RealtyMapper {
 
     List<Realty> selectAllRealty();
+
+    List<Realty> selectRealtyListByIds(List<Integer> ids);
 }
