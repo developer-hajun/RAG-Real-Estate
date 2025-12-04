@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ssafy.realty.Common.ResponseDto;
+import ssafy.realty.DTO.CommentResponseDto;
 import ssafy.realty.Entity.Comment;
 import ssafy.realty.Mapper.CommentMapper;
 import ssafy.realty.Service.CommentService;
@@ -31,7 +32,7 @@ public class CommentController {
     }
     @GetMapping("/user/{id}")
     public ResponseEntity<ResponseDto<?>> userComment(int UserId) {
-        List<Comment> byUserId = commentService.findByUserId(UserId);
+        List<CommentResponseDto> byUserId = commentService.findByUserId(UserId);
         return ResponseEntity.ok(ResponseDto.create(HttpStatus.OK.value(), "게시물의 댓글을 조회했습니다.",byUserId));
     }
     @DeleteMapping("/{commentId}")

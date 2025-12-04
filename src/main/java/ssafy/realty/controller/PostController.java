@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ssafy.realty.Common.ResponseDto;
+import ssafy.realty.DTO.PostResponseDto;
 import ssafy.realty.Entity.Comment;
 import ssafy.realty.Entity.Post;
 import ssafy.realty.Mapper.PostMapper;
@@ -30,13 +31,13 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<ResponseDto<?>> allPost() {
-        List<Post> posts = postService.selectAll();
+        List<PostResponseDto> posts = postService.selectAll();
         return ResponseEntity.ok(ResponseDto.create(HttpStatus.OK.value(), "전체 게시글을 조회 했습니다.",posts));
 
     }
     @GetMapping("/{PostId}")
     public ResponseEntity<ResponseDto<?>> selectDetail(int PostId) {
-        Post post = postService.detailPost(PostId);
+        PostResponseDto post = postService.detailPost(PostId);
         return ResponseEntity.ok(ResponseDto.create(HttpStatus.OK.value(), "게시물의 상세정보를 조회했습니다.",post));
     }
     @PatchMapping
