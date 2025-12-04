@@ -57,6 +57,7 @@ class PostServiceTest {
         // given
         User user = new User();
         user.setId(testUserId);
+
         Post post = new Post();
         post.setTitle("상세조회용 제목");
         post.setText("상세조회용 내용");

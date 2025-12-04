@@ -9,7 +9,7 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
 import ssafy.realty.Entity.Realty;
-import ssafy.realty.Entity.RealtyRecommendationResponse;
+import ssafy.realty.DTO.RealtyRecommendationResponse;
 import ssafy.realty.Mapper.RealtyMapper;
 
 import java.util.ArrayList;

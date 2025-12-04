@@ -1,4 +1,4 @@
-package ssafy.realty.Entity;
+package ssafy.realty.DTO;
 
 import lombok.Builder;
 import lombok.Data;
@@ -11,5 +11,5 @@ import java.util.List;
 @ToString
 public class RealtyRecommendationResponse {
     private String aiMessage;       // AI가 생성한 추천 멘트
-    private List<Realty> realties;  // 추천된 실제 매물 데이터 리스트
+    private List<RealtyResponseDto> realties;  // 추천된 실제 매물 데이터 리스트
 }

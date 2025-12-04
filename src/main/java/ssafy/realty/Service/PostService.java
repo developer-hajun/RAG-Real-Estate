@@ -63,4 +63,5 @@ public class PostService {
             throw new PostNotFoundException("삭제할 게시글(ID: " + postId + ")을 찾을 수 없습니다.");
         }
     }
+
 }
