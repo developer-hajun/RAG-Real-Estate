@@ -1,0 +1,268 @@
+/* /src/assets/style.css */
+/* =========================================
+     DESIGN SYSTEM (Toss Style)
+     ========================================= */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css");
+     
+:root {
+  --t-blue: #0064ff;
+  --t-blue-hover: #0050cc;
+  --t-bg: #f2f4f6;
+  --t-white: #ffffff;
+  --t-text-main: #191f28;
+  --t-text-sub: #4e5968;
+  --t-text-grey: #8b95a1;
+  --t-border: #e5e8eb;
+  --t-red: #ff3b30;
+  --radius-L: 24px;
+  --radius-M: 16px;
+  --radius-S: 12px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Pretendard", sans-serif;
+}
+body {
+  background-color: var(--t-bg);
+  color: var(--t-text-main);
+  overflow-x: hidden;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+ul {
+  list-style: none;
+}
+input,
+textarea {
+  outline: none;
+}
+
+/* HEADER */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-inner {
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--t-blue);
+}
+nav {
+  display: flex;
+  gap: 24px;
+}
+nav a {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--t-text-sub);
+  transition: color 0.2s;
+}
+nav a:hover,
+nav a.router-link-active {
+  color: var(--t-blue);
+}
+
+/* LAYOUT */
+.main-container {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* CARDS */
+.card {
+  background: var(--t-white);
+  border-radius: var(--radius-L);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  position: relative;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s;
+}
+.card.hoverable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+.card h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.card p {
+  color: var(--t-text-sub);
+  font-size: 14px;
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+/* BUTTONS & INPUTS */
+.btn {
+  background-color: var(--t-blue);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: var(--radius-S);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn:hover {
+  background-color: var(--t-blue-hover);
+}
+.btn-secondary {
+  background-color: #e8f3ff;
+  color: var(--t-blue);
+}
+.btn-danger {
+  background-color: #ffeaea;
+  color: var(--t-red);
+}
+.btn-sm {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.input-box {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--t-border);
+  border-radius: var(--radius-S);
+  background: var(--t-white);
+  font-size: 15px;
+  transition: border-color 0.2s;
+  margin-bottom: 10px;
+}
+.input-box:focus {
+  border-color: var(--t-blue);
+}
+
+/* TABS & HERO */
+.hero-section {
+  text-align: center;
+  padding: 40px 0 60px;
+}
+.hero-title {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 16px;
+  color: var(--t-text-main);
+}
+.search-wrapper {
+  background: var(--t-white);
+  padding: 24px;
+  border-radius: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  margin: 0 auto;
+}
+.tabs {
+  background: var(--t-bg);
+  padding: 4px;
+  border-radius: 14px;
+  display: flex;
+  position: relative;
+  margin-bottom: 20px;
+}
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--t-text-grey);
+  cursor: pointer;
+  z-index: 2;
+}
+.tab-btn.active {
+  color: var(--t-blue);
+}
+.tab-indicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  width: calc(33.33% - 8px); /* 탭 크기 조정 */
+  background: var(--t-white);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s var(--ease);
+  z-index: 1;
+}
+.search-bar {
+  display: flex;
+  gap: 10px;
+}
+
+/* UTIL */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flex-gap {
+  display: flex;
+  gap: 10px;
+}
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  background: #f0f0f0;
+  color: #555;
+}
+.badge-blue {
+  background: #e8f3ff;
+  color: var(--t-blue);
+}
+
+/* ANIMATION (라우터 트랜지션) */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s var(--ease);
+  /* 라우트 전환 시 깜빡임/겹침 방지를 위해 추가 */
+  position: absolute; 
+  width: 100%;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
