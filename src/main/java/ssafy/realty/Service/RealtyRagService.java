@@ -8,6 +8,7 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
+import ssafy.realty.DTO.RealtyResponseDto;
 import ssafy.realty.Entity.Realty;
 import ssafy.realty.DTO.RealtyRecommendationResponse;
 import ssafy.realty.Mapper.RealtyMapper;
@@ -85,9 +86,16 @@ public class RealtyRagService {
                 .content();
 
         // 7. 최종 DTO 반환 (메시지 + 데이터)
+        List<RealtyResponseDto> realtyResponseDtos = changeDto(recommendedRealties);
         return RealtyRecommendationResponse.builder()
                 .aiMessage(aiResponse)            // 텍스트 설명
-                .realties(recommendedRealties)    // 실제 데이터 객체 리스트
+                .realties(realtyResponseDtos)    // 실제 데이터 객체 리스트
                 .build();
+    }
+
+    protected List<RealtyResponseDto> changeDto(List<Realty> realties){
+        return realties.stream()
+                .map(RealtyResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

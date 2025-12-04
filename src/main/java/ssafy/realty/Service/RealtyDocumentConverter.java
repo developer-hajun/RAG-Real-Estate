@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j; // 로깅을 위해 추가 추천
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
+import ssafy.realty.DTO.RealtyResponseDto;
 import ssafy.realty.Entity.Realty;
 import ssafy.realty.Mapper.RealtyMapper;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -81,4 +83,12 @@ public class RealtyDocumentConverter {
         if (address == null || address.isEmpty()) return "Unknown";
         return address.split(" ")[0];
     }
+
+    protected List<RealtyResponseDto> changeDto(List<Realty> realties){
+        return realties.stream()
+                .map(RealtyResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+
 }
