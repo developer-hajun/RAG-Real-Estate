@@ -48,7 +48,7 @@ public class userController {
                 "test@example.com",     // email
                 LocalDateTime.of(1996, 1, 1, 0, 0) // birthDate
         );
-        String accessToken = jwtUtil.generateToken(user.getEmail(),user.getId());
+        String accessToken = "Bearer " + jwtUtil.generateToken(user.getEmail(),user.getId());
 
         return ResponseEntity.ok(ResponseDto.create(200,"로그인 성공",accessToken));
 
