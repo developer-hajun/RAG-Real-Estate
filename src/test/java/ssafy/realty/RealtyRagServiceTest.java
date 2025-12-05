@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ssafy.realty.Entity.Realty;
-import ssafy.realty.DTO.RealtyRecommendationResponse;
+import ssafy.realty.DTO.Response.RealtyRecommendationResponse;
 import ssafy.realty.Mapper.RealtyMapper;
 import ssafy.realty.Service.RealtyDocumentConverter;
 import ssafy.realty.Service.RealtyRagService;

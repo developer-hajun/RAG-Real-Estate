@@ -1,6 +1,5 @@
-package ssafy.realty.DTO;
+package ssafy.realty.DTO.Response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

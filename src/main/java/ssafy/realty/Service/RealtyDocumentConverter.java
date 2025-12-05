@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j; // 로깅을 위해 추가 추천
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
-import ssafy.realty.DTO.RealtyResponseDto;
+import ssafy.realty.DTO.Response.RealtyResponseDto;
 import ssafy.realty.Entity.Realty;
 import ssafy.realty.Mapper.RealtyMapper;
 

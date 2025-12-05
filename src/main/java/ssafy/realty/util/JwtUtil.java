@@ -34,6 +34,7 @@ public class JwtUtil {
 
     //토큰에서 정보 추출
     public Claims extractClaims(String token) {
+        token = token.substring(7);
         return Jwts.parserBuilder() // JWT 문자열을 분석하기 위한 빌더 패턴 시작
                 .setSigningKey(getSigningKey()) // 토큰이 변조되지 않았는지 검증하기 위해 사용할 서명 키를 설정 함
                 .build() // 설정이 완료된 parserBuilder를 바탕으로 실제 파싱 작업을 수행할 JwtParser 객체를 생성
@@ -48,6 +49,16 @@ public class JwtUtil {
             return true;
         } catch (JwtException | IllegalArgumentException e) { // JwtException은 서명 불일치, 토큰 만료등 JWT 관련 오류를 포괄하며, IllegalArgumentException은 토큰 문자열이 잘못된 형식일 경우 발생할 수 있음
             return false;
+        }
+    }
+
+    public Integer extractUserId(String token) {
+        try {
+            Claims claims = extractClaims(token);
+            return claims.get("userId", Integer.class);
+
+        } catch (JwtException | IllegalArgumentException e) {
+            return null;
         }
     }
 

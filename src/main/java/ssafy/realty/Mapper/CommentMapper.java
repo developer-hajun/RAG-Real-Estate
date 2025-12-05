@@ -8,9 +8,9 @@ import java.util.List;
 @Mapper
 public interface CommentMapper {
 
+    Comment findById(int id);
     List<Comment> selectCommentsByUserId(Integer userId);
 
-    // XML에서 #{postId}로 받기 위해 @Param 추가
     List<Comment> selectPostByID(@Param("postId") Integer postId);
 
     int updateComment(Comment comment);

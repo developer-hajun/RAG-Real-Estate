@@ -1,91 +1,89 @@
 package ssafy.realty.Service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ssafy.realty.DTO.CommentResponseDto;
-import ssafy.realty.DTO.PostResponseDto;
+import ssafy.realty.DTO.Request.PostRequestDto;
+import ssafy.realty.DTO.Response.CommentResponseDto;
+import ssafy.realty.DTO.Response.PostResponseDto;
 import ssafy.realty.Entity.Post;
 import ssafy.realty.Exception.global.DatabaseOperationException;
 import ssafy.realty.Exception.post.PostNotFoundException;
 import ssafy.realty.Mapper.PostMapper;
+import ssafy.realty.util.JwtUtil;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) 
+@Transactional(readOnly = true)
 public class PostService {
     private final PostMapper postMapper;
     private final CommentService commentService;
+    private final JwtUtil jwtUtil;
 
-    @Transactional // 쓰기 작업이므로 트랜잭션 적용
-    public void insertPost(Post post)  {
-        int result = postMapper.insertPost(post);
-        if (result == 0) throw new DatabaseOperationException();
+    @Transactional
+    public void insertPost(String token, PostRequestDto post) {
+        Integer userId = jwtUtil.extractUserId(token);
+        if (userId == null) throw new AccessDeniedException("유효하지 않은 인증 토큰입니다.");
+
+        post.setUserId(userId);
+        if (postMapper.insertPost(post) == 0) {
+            throw new DatabaseOperationException("게시글 삽입 중 오류가 발생했습니다.");
+        }
     }
 
     public List<PostResponseDto> selectAll() {
-        try{
-            return allPostDto(postMapper.selectAll());
-        }
-        catch(Exception e){
-            // 상세한 예외 로깅 필요
-            throw new DatabaseOperationException();
-        }
-    }
-
-    public PostResponseDto detailPost(int postId){
-        Post post = postMapper.detailPost(postId);
-        if (post == null) {
-            throw new PostNotFoundException("ID가 " + postId + "인 게시글을 찾을 수 없습니다.");
-        }
-
-        // 1. DTO 변환 (게시글 기본 정보)
-        PostResponseDto postResponseDto = new PostResponseDto(post);
-
-        try {
-            List<CommentResponseDto> comments = post.getCommentList().stream()
-                    .map(commentService::convertToDto)
-                    .collect(Collectors.toList());
-
-            postResponseDto.setCommentDtos(comments);
-
-        } catch (Exception e) {
-            System.err.println("댓글 조회 중 오류 발생: " + e.getMessage());
-            postResponseDto.setCommentDtos(List.of());
-        }
-
-        return postResponseDto;
-    }
-
-    @Transactional
-    public void updatePost(Post post) {
-        int result = postMapper.updatePost(post);
-        if (result == 0) {
-            throw new PostNotFoundException("수정할 게시글(ID: " + post.getId() + ")을 찾을 수 없습니다.");
-        }
-    }
-
-    @Transactional
-    public void deletePost(int postId) {
-        int result = postMapper.deletePost(postId);
-        if (result == 0) {
-            throw new PostNotFoundException("삭제할 게시글(ID: " + postId + ")을 찾을 수 없습니다.");
-        }
-    }
-
-    protected List<PostResponseDto> allPostDto(List<Post> posts) {
-        return posts.stream()
-                .map(this::convertToSimpleDto)
+        return postMapper.selectAll().stream()
+                .map(post -> new PostResponseDto(post.getId(), post.getTitle(), post.getText(), List.of()))
                 .collect(Collectors.toList());
     }
 
+    public PostResponseDto detailPost(int postId) {
+        Post post = postMapper.detailPost(postId);
+        if (post == null) throw new PostNotFoundException("게시글을 찾을 수 없습니다.");
 
-    private PostResponseDto convertToSimpleDto(Post post) {
-        return new PostResponseDto(post.getId(), post.getTitle(), post.getText(), List.of());
+        PostResponseDto responseDto = new PostResponseDto(post);
+
+        // 댓글 매핑
+        List<CommentResponseDto> comments = Optional.ofNullable(post.getCommentList())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(commentService::convertToDto)
+                .collect(Collectors.toList());
+
+        responseDto.setCommentDtos(comments);
+        return responseDto;
     }
 
+    @Transactional
+    public void updatePost(String token, PostRequestDto postDto) {
+        Integer userId = jwtUtil.extractUserId(token);
+        Post find = postMapper.findById(postDto.getId());
+
+        if (find == null) throw new PostNotFoundException("게시글이 존재하지 않습니다.");
+        if (!userId.equals(find.getUser().getId())) throw new AccessDeniedException("수정 권한이 없습니다.");
+
+        if (postMapper.updatePost(postDto) == 0) {
+            throw new DatabaseOperationException("게시글 수정 실패");
+        }
+    }
+
+    @Transactional
+    public void deletePost(String token, int postId) {
+        Integer userId = jwtUtil.extractUserId(token);
+        Post find = postMapper.findById(postId);
+
+        if (find == null) throw new PostNotFoundException("게시글이 존재하지 않습니다.");
+        if (!userId.equals(find.getUser().getId())) throw new AccessDeniedException("삭제 권한이 없습니다.");
+
+        if (postMapper.deletePost(postId) == 0) {
+            throw new DatabaseOperationException("게시글 삭제 실패");
+        }
+    }
 }

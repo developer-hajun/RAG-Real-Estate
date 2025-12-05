@@ -1,12 +1,14 @@
-package ssafy.realty.DTO;
+package ssafy.realty.DTO.Response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import ssafy.realty.Entity.Post;
 
 import java.util.List;
 
-@Data
+@Setter
+@Getter
+@ToString
+@NoArgsConstructor
 @AllArgsConstructor
 public class PostResponseDto {
     private int id;
@@ -17,7 +19,6 @@ public class PostResponseDto {
     public PostResponseDto(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
-        this.text = post.getTitle();
+        this.text = post.getText();
     }
-
 }

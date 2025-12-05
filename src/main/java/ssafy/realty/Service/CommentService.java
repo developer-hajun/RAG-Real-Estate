@@ -1,75 +1,101 @@
 package ssafy.realty.Service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException; // 인가 실패 예외
 import org.springframework.stereotype.Service;
-import ssafy.realty.DTO.CommentResponseDto;
+import org.springframework.transaction.annotation.Transactional; // 트랜잭션 관리
+import ssafy.realty.DTO.Request.CommentRequestDto;
+import ssafy.realty.DTO.Response.CommentResponseDto;
 import ssafy.realty.Entity.Comment;
 import ssafy.realty.Exception.comment.CommentNotFoundException;
 import ssafy.realty.Exception.global.DatabaseOperationException;
 import ssafy.realty.Mapper.CommentMapper;
+import ssafy.realty.util.JwtUtil; // JWT 유틸리티 추가
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CommentService {
     private final CommentMapper commentMapper;
+    private final JwtUtil jwtUtil;
 
-    /**
-     * 특정 사용자 ID의 댓글 목록을 조회하고 CommentResponseDto로 변환하여 반환합니다.
-     */
-    public List<CommentResponseDto> findByUserId(Integer userId) {
-        try {
-            List<Comment> comments = commentMapper.selectCommentsByUserId(userId);
+    public List<CommentResponseDto> findByUserId(String token) {
+        Integer userId = jwtUtil.extractUserId(token);
+        if (userId == null) throw new AccessDeniedException("유효하지 않은 토큰입니다.");
 
-            // Stream API를 사용하여 엔티티 리스트를 DTO 리스트로 변환
-            return comments.stream()
-                    .map(this::convertToDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new DatabaseOperationException();
-        }
+        List<Comment> comments = commentMapper.selectCommentsByUserId(userId);
+        if (comments == null) return Collections.emptyList();
+
+        return comments.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public int insertComment(Comment comment, int postId, int UserId, int parentCommentId) {
-        int val = commentMapper.insertComment(comment, postId, UserId, parentCommentId);
-        if (val == 0) {
-            throw new DatabaseOperationException();
-        }
-        return val;
+    @Transactional
+    public int insertComment(String token, CommentRequestDto requestDto) {
+        Integer userId = jwtUtil.extractUserId(token);
+        if (userId == null) throw new AccessDeniedException("유효하지 않은 토큰입니다.");
+
+        Comment comment = new Comment();
+        comment.setContent(requestDto.getContent());
+
+        int result = commentMapper.insertComment(comment, requestDto.getPostId(), userId, requestDto.getParentsId());
+
+        if (result == 0) throw new DatabaseOperationException("댓글 저장 실패");
+        return result;
     }
 
-    public int updateComment(Comment comment) {
-        int val = commentMapper.updateComment(comment);
-        if (val == 0) {
-            throw new CommentNotFoundException();
+    @Transactional
+    public int updateComment(String token, CommentRequestDto requestDto) {
+        Integer userId = jwtUtil.extractUserId(token);
+
+        Comment findComment = commentMapper.findById(requestDto.getId());
+        if (findComment == null) throw new CommentNotFoundException("댓글을 찾을 수 없습니다.");
+
+        // 권한 체크
+        if (!userId.equals(findComment.getUser().getId())) {
+            throw new AccessDeniedException("수정 권한이 없습니다.");
         }
-        return val;
+
+        Comment updateTarget = new Comment();
+        updateTarget.setId(requestDto.getId());
+        updateTarget.setContent(requestDto.getContent());
+
+        int result = commentMapper.updateComment(updateTarget);
+        if (result == 0) throw new CommentNotFoundException("댓글 수정 실패");
+        return result;
     }
 
+    @Transactional
+    public int deleteComment(String token, Integer commentId) {
+        Integer userId = jwtUtil.extractUserId(token);
 
-    public int deleteComment(Integer commentId) {
-        int val = commentMapper.deleteComment(commentId);
-        if (val == 0) {
-            throw new CommentNotFoundException();
+        Comment findComment = commentMapper.findById(commentId);
+        if (findComment == null) throw new CommentNotFoundException("댓글을 찾을 수 없습니다.");
+
+        if (!userId.equals(findComment.getUser().getId())) {
+            throw new AccessDeniedException("삭제 권한이 없습니다.");
         }
-        return val;
+
+        int result = commentMapper.deleteComment(commentId);
+        if (result == 0) throw new CommentNotFoundException("댓글 삭제 실패");
+        return result;
     }
 
-
-    CommentResponseDto convertToDto(Comment comment) {
+    public CommentResponseDto convertToDto(Comment comment) {
         CommentResponseDto parentDto = null;
-
-        Comment parentEntity = comment.getParentComment();
-        if (parentEntity != null) {
-            parentDto = convertToDto(parentEntity);
+        if (comment.getParentComment() != null) {
+            parentDto = convertToDto(comment.getParentComment());
         }
 
         return new CommentResponseDto(
                 comment.getId(),
                 comment.getContent(),
-                parentDto, // 변환된 DTO를 사용
+                parentDto,
                 comment.getUpdatedDate()
         );
     }

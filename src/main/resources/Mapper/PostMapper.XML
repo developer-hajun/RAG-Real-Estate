@@ -18,40 +18,64 @@
                     select="ssafy.realty.Mapper.CommentMapper.selectPostByID"/>
     </resultMap>
 
+    <resultMap id="PostMap" type="ssafy.realty.Entity.Post">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="text" column="text"/>
+        <result property="createdDate" column="createdDate"/>
+        <result property="updatedDate" column="updatedDate"/>
+
+        <association property="user" javaType="ssafy.realty.Entity.User">
+            <id property="id" column="user_id"/>
+        </association>
+    </resultMap>
+
+
     <select id="detailPost" resultMap="PostDetailMap">
-        SELECT * FROM Post WHERE id = #{id}
+        SELECT id, title, text, createdDate, updatedDate, user_id
+        FROM Post
+        WHERE id = #{id}
     </select>
 
-    <select id="selectAll" resultType="ssafy.realty.Entity.Post">
-        SELECT * FROM Post
+    <select id="selectAll" resultMap="PostMap">
+        SELECT id, title, text, createdDate, updatedDate, user_id
+        FROM Post
     </select>
 
-    <select id="findByUserId" resultType="ssafy.realty.Entity.Post">
-        SELECT * FROM Post WHERE user_id = #{userId}
+    <select id="findById" resultMap="PostMap">
+        SELECT id, title, text, createdDate, updatedDate, user_id
+        FROM Post
+        WHERE id=#{id}
     </select>
 
-    <insert id="insertPost" parameterType="ssafy.realty.Entity.Post" useGeneratedKeys="true" keyProperty="id">
+    <select id="findByUserId" resultMap="PostMap">
+        SELECT id, title, text, createdDate, updatedDate, user_id
+        FROM Post
+        WHERE user_id = #{userId}
+    </select>
+
+    <insert id="insertPost" parameterType="ssafy.realty.DTO.Request.PostRequestDto" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO Post (
-            title,
-            text,
-            user_id,
-            createdDate,
-            updatedDate
+        title,
+        text,
+        user_id,
+        createdDate,
+        updatedDate
         )
         VALUES (
-                   #{title},
-                   #{text},
-                   #{user.id},
-                   NOW(),
-                   NOW()
-               )
+        #{title},
+        #{text},
+        #{UserId},
+        NOW(),
+        NOW()
+        )
     </insert>
 
-    <update id="updatePost" parameterType="ssafy.realty.Entity.Post">
+    <update id="updatePost" parameterType="ssafy.realty.DTO.Request.PostRequestDto">
         UPDATE Post
         SET title = #{title},
-            text = #{text},
-            updatedDate = NOW()
+        text = #{text},
+        updatedDate = NOW()
         WHERE id = #{id}
     </update>
 

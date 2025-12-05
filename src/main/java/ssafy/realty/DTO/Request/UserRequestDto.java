@@ -1,4 +1,4 @@
-package ssafy.realty.DTO;
+package ssafy.realty.DTO.Request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

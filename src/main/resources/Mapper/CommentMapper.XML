@@ -7,33 +7,75 @@
         <result property="content" column="a_content"/>
         <result property="createdDate" column="a_created_date"/>
         <result property="updatedDate" column="a_updated_date"/>
+        <!-- 댓글 작성자 ID 매핑을 위한 association 추가 -->
+        <association property="user" javaType="ssafy.realty.Entity.User">
+            <id property="id" column="a_user_id"/>
+        </association>
 
         <collection property="replies" ofType="ssafy.realty.Entity.Comment">
             <id property="id" column="b_id"/>
             <result property="content" column="b_content"/>
             <result property="createdDate" column="b_created_date"/>
             <result property="updatedDate" column="b_updated_date"/>
+            <!-- 답글 작성자 ID 매핑 -->
+            <association property="user" javaType="ssafy.realty.Entity.User">
+                <id property="id" column="b_user_id"/>
+            </association>
         </collection>
     </resultMap>
 
-    <select id="selectCommentsByUserId" resultType="ssafy.realty.Entity.Comment">
-        SELECT * FROM Comment WHERE user_id = #{userId}
+    <resultMap id="CommentMap" type="ssafy.realty.Entity.Comment">
+
+        <id property="id" column="id"/>
+        <result property="content" column="content"/>
+        <result property="createdDate" column="createdDate"/>
+        <result property="updatedDate" column="updatedDate"/>
+
+        <!-- 소유권 확인을 위해 User ID 매핑 필수 -->
+        <association property="user" javaType="ssafy.realty.Entity.User">
+            <id property="id" column="user_id"/>
+        </association>
+    </resultMap>
+
+    <!-- findById: 댓글 소유권 확인용 -->
+    <select id="findById" resultMap="CommentMap">
+        SELECT
+        id,
+        content,
+        createdDate,
+        updatedDate,
+        user_id  <!-- user_id 컬럼 추가 -->
+        FROM Comment
+        WHERE id=#{id}
+    </select>
+
+    <select id="selectCommentsByUserId" resultMap="CommentMap">
+        SELECT
+            id,
+            content,
+            createdDate,
+            updatedDate,
+            user_id
+        FROM Comment
+        WHERE user_id = #{userId}
     </select>
 
     <select id="selectPostByID" resultMap="CommentResultMap">
         SELECT
-            a.id               AS a_id,
-            a.content          AS a_content,
-            a.createdDate      AS a_created_date,
-            a.updatedDate      AS a_updated_date,
-            b.id               AS b_id,
-            b.content          AS b_content,
-            b.createdDate      AS b_created_date,
-            b.updatedDate      AS b_updated_date
+        a.id               AS a_id,
+        a.content          AS a_content,
+        a.createdDate      AS a_created_date,
+        a.updatedDate      AS a_updated_date,
+        a.user_id          AS a_user_id,
+        b.id               AS b_id,
+        b.content          AS b_content,
+        b.createdDate      AS b_created_date,
+        b.updatedDate      AS b_updated_date,
+        b.user_id          AS b_user_id
         FROM Comment a
-                 LEFT JOIN Comment b ON a.id = b.parentComment_id
+        LEFT JOIN Comment b ON a.id = b.parentComment_id
         WHERE a.post_id = #{postId}
-          AND a.parentComment_id IS NULL
+        AND a.parentComment_id IS NULL
     </select>
 
     <update id="updateComment" parameterType="ssafy.realty.Entity.Comment">
@@ -66,6 +108,4 @@
     <delete id="deleteComment">
         DELETE FROM Comment WHERE id = #{commentId}
     </delete>
-
-
 </mapper>

@@ -1,12 +1,13 @@
-package ssafy.realty.DTO;
+package ssafy.realty.DTO.Response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import ssafy.realty.Entity.Comment;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Setter
+@Getter
+@ToString
+@NoArgsConstructor
 @AllArgsConstructor
 public class CommentResponseDto {
     private int id;

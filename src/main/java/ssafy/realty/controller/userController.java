@@ -2,12 +2,11 @@ package ssafy.realty.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ssafy.realty.Common.ResponseDto;
-import ssafy.realty.DTO.SearchHistoryResponseDto;
-import ssafy.realty.DTO.UserRequestDto;
-import ssafy.realty.DTO.UserResponseDto;
+import ssafy.realty.DTO.Response.SearchHistoryResponseDto;
+import ssafy.realty.DTO.Request.UserRequestDto;
+import ssafy.realty.DTO.Response.UserResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

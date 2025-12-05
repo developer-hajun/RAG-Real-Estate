@@ -8,9 +8,9 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
-import ssafy.realty.DTO.RealtyResponseDto;
+import ssafy.realty.DTO.Response.RealtyResponseDto;
 import ssafy.realty.Entity.Realty;
-import ssafy.realty.DTO.RealtyRecommendationResponse;
+import ssafy.realty.DTO.Response.RealtyRecommendationResponse;
 import ssafy.realty.Mapper.RealtyMapper;
 
 import java.util.ArrayList;
