@@ -49,13 +49,8 @@ public class userController {
                 LocalDateTime.of(1996, 1, 1, 0, 0) // birthDate
         );
         String accessToken = jwtUtil.generateToken(user.getEmail(),user.getId());
-        JwtLoginResponseDto jwtLoginResponse = new  JwtLoginResponseDto(
-                accessToken,
-                null, // refresh 토큰
-                user
-        );
 
-        return ResponseEntity.ok(ResponseDto.create(200,"로그인 성공",jwtLoginResponse));
+        return ResponseEntity.ok(ResponseDto.create(200,"로그인 성공",accessToken));
 
     }
 
