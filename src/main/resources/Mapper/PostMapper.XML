@@ -60,14 +60,16 @@
         text,
         user_id,
         createdDate,
-        updatedDate
+        updatedDate,
+        board_id
         )
         VALUES (
         #{title},
         #{text},
         #{UserId},
         NOW(),
-        NOW()
+        NOW(),
+        #{boardId}
         )
     </insert>
 

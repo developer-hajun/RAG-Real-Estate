@@ -28,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         // http 요청 헤더에서 Authorization 값을 가져온다.
         String authorizationHeader = request.getHeader("Authorization");
 

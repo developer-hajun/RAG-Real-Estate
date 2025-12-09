@@ -13,4 +13,5 @@ public class PostRequestDto {
     private int UserId;
     private String title;
     private String text;
+    private int boardId;
 }

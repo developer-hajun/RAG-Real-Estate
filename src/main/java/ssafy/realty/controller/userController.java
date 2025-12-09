@@ -42,7 +42,7 @@ public class userController {
                     .body(ResponseDto.create(401, "인증 실패"));
         }
         UserResponseDto user = new UserResponseDto(
-                1,                      // id
+                43,                      // id
                 "홍길동",               // name
                 29,                     // age
                 "test@example.com",     // email

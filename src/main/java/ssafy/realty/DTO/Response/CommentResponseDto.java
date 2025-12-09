@@ -1,8 +1,10 @@
 package ssafy.realty.DTO.Response;
 
 import lombok.*;
+import ssafy.realty.Entity.Comment;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -14,4 +16,11 @@ public class CommentResponseDto {
     private String content;
     private CommentResponseDto parentComment;
     private LocalDateTime updatedDate;
+    private List<CommentResponseDto> replies;
+
+    public CommentResponseDto(Comment comment) {
+        this.id = comment.getId();
+        this.content = comment.getContent();
+        this.updatedDate = comment.getUpdatedDate();
+    }
 }

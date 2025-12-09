@@ -4,6 +4,7 @@ import lombok.*;
 import ssafy.realty.Entity.Post;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -20,5 +21,17 @@ public class PostResponseDto {
         this.id = post.getId();
         this.title = post.getTitle();
         this.text = post.getText();
+    }
+
+    public static PostResponseDto fromEntity(Post post) {
+
+        List<CommentResponseDto> commentDtos = null;
+
+        return new PostResponseDto(
+                post.getId(),
+                post.getTitle(),
+                post.getText(),
+                commentDtos
+        );
     }
 }

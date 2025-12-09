@@ -14,7 +14,6 @@ public class UserResponseDto {
     private String email;
     private LocalDateTime birthDate;
 
-    // 프로필 조회 응답
     public UserResponseDto(Integer id, String name, Integer age, String email, LocalDateTime birthDate) {
         this.id = id;
         this.name = name;

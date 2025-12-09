@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -20,4 +21,12 @@ public class Post {
     private List<Comment> commentList;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+
+    public Post(int id, String title, String text, LocalDateTime createdDate, LocalDateTime updatedDate) {
+        this.id = id;
+        this.title = title;
+        this.text = text;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
+    }
 }

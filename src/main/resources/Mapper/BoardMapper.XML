@@ -1,4 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ssafy.realty.Mapper.BoardMapper">
+
+    <select id="selectAllBoardsWithoutPosts" resultType="ssafy.realty.Entity.Board">
+        SELECT
+            id,
+            title,
+            createdDate,
+            updatedDate
+        FROM
+            Board
+    </select>
+
+    <resultMap id="boardWithPostsResultMap" type="ssafy.realty.Entity.Board">
+        <id property="id" column="board_id"/>
+        <result property="title" column="board_title"/>
+        <result property="createdDate" column="board_createdDate"/>
+        <result property="updatedDate" column="board_updatedDate"/>
+        <collection property="posts" ofType="ssafy.realty.Entity.Post">
+            <id property="id" column="post_id"/>
+            <result property="title" column="post_title"/>
+            <result property="text" column="post_text"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectBoardWithPostsById" resultMap="boardWithPostsResultMap">
+        SELECT
+            b.id AS board_id,
+            b.title AS board_title,
+            b.createdDate AS board_createdDate,
+            b.updatedDate AS board_updatedDate,
+            p.id AS post_id,
+            p.title AS post_title,
+            p.text AS post_text
+        /* Post 엔티티의 나머지 컬럼들도 여기에 AS post_컬럼명 형태로 모두 추가해야 합니다. */
+        FROM
+            Board b
+                LEFT JOIN
+            Post p ON b.id = p.board_id
+        WHERE
+            b.id = #{id}
+    </select>
 </mapper>

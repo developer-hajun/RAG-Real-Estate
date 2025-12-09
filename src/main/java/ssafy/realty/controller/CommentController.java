@@ -42,7 +42,7 @@ public class CommentController {
     @PatchMapping
     public ResponseEntity<ResponseDto<?>> updateComment(@RequestHeader("Authorization") String token,
                                                         @RequestBody CommentRequestDto requestDto) {
-        commentService.updateComment(token, requestDto);
+            commentService.updateComment(token, requestDto);
         return ResponseEntity.ok(ResponseDto.create(HttpStatus.OK.value(), "댓글을 수정 했습니다."));
     }
 }

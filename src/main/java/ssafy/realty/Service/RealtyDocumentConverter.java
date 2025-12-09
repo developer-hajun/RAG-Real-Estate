@@ -56,9 +56,6 @@ public class RealtyDocumentConverter {
         }
     }
 
-    /**
-     * 단일 Realty 객체를 Spring AI Document로 변환
-     */
     public Document toDocument(Realty realty) {
         String content = String.format(
                 "이 매물의 이름은 %s이고, 주소는 %s입니다. 보증금 %d만원에 월세 %d만원인 매물입니다.",

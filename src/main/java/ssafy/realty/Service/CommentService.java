@@ -87,16 +87,17 @@ public class CommentService {
     }
 
     public CommentResponseDto convertToDto(Comment comment) {
-        CommentResponseDto parentDto = null;
-        if (comment.getParentComment() != null) {
-            parentDto = convertToDto(comment.getParentComment());
+        // 1. 기본 댓글 정보 매핑 (id, content, updatedDate 등)
+        CommentResponseDto dto = new CommentResponseDto(comment);
+
+        // 2. 대댓글(Replies) 처리
+        if (comment.getReplies() != null && !comment.getReplies().isEmpty()) {
+            List<CommentResponseDto> replyDtos = comment.getReplies().stream()
+                    .map(this::convertToDto) // 재귀 호출로 계층 구조 생성
+                    .collect(Collectors.toList());
+            dto.setReplies(replyDtos); // ⭐ 새로 추가된 replies 필드에 설정 ⭐
         }
 
-        return new CommentResponseDto(
-                comment.getId(),
-                comment.getContent(),
-                parentDto,
-                comment.getUpdatedDate()
-        );
+        return dto;
     }
 }
