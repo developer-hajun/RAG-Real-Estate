@@ -51,6 +51,7 @@ class PostServiceTest {
         PostRequestDto requestDto = new PostRequestDto();
         requestDto.setTitle("새로운 글");
         requestDto.setText("내용입니다.");
+        requestDto.setBoardId(1);
         postService.insertPost(TEST_TOKEN, requestDto);
 
         assertThat(requestDto.getId()).isGreaterThan(0);
@@ -63,6 +64,7 @@ class PostServiceTest {
         PostRequestDto requestDto = new PostRequestDto();
         requestDto.setTitle("상세조회용 제목");
         requestDto.setText("상세조회용 내용");
+        requestDto.setBoardId(1);
         postService.insertPost(TEST_TOKEN, requestDto);
         int postId = requestDto.getId();
 
@@ -79,6 +81,7 @@ class PostServiceTest {
         PostRequestDto originPost = new PostRequestDto();
         originPost.setTitle("원래 제목");
         originPost.setText("원래 내용");
+        originPost.setBoardId(1);
         postService.insertPost(TEST_TOKEN, originPost);
         int postId = originPost.getId();
 
@@ -100,6 +103,7 @@ class PostServiceTest {
         PostRequestDto post = new PostRequestDto();
         post.setTitle("삭제될 글");
         post.setText("내용");
+        post.setBoardId(1);
         postService.insertPost(TEST_TOKEN, post);
         int postId = post.getId();
 
@@ -113,8 +117,8 @@ class PostServiceTest {
     @Test
     @DisplayName("5. 전체 게시글 조회(SelectAll) - 리스트 개수 확인")
     void selectAllTest() {
-        PostRequestDto p1 = new PostRequestDto(); p1.setTitle("글1"); p1.setText("내용1");
-        PostRequestDto p2 = new PostRequestDto(); p2.setTitle("글2"); p2.setText("내용2");
+        PostRequestDto p1 = new PostRequestDto(); p1.setTitle("글1"); p1.setText("내용1"); p1.setBoardId(1);
+        PostRequestDto p2 = new PostRequestDto(); p2.setTitle("글2"); p2.setText("내용2"); p2.setBoardId(1);
 
         postService.insertPost(TEST_TOKEN, p1);
         postService.insertPost(TEST_TOKEN, p2);
@@ -134,6 +138,7 @@ class PostServiceTest {
         PostRequestDto post = new PostRequestDto();
         post.setTitle("삭제할 글");
         post.setText("내용");
+        post.setBoardId(1);
         postService.insertPost(TEST_TOKEN, post);
         int postId = post.getId();
 
