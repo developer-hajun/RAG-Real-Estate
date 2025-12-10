@@ -4,12 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ssafy.realty.DTO.Request.UserRequestDto;
+import ssafy.realty.DTO.Response.SearchHistoryResponseDto;
+import ssafy.realty.DTO.Response.UserResponseDto;
+import ssafy.realty.Entity.SearchHistory;
 import ssafy.realty.Entity.User;
 import ssafy.realty.Mapper.UserMapper;
 import ssafy.realty.util.JwtUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,35 +23,76 @@ import java.util.Map;
 public class UserService {
 
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    private final JwtUtil jwtUtil;
-
-    private final PasswordEncoder passwordEncoder ;
-
-    // login 기능
-    public Map<String, Object> login(User user) {
-        User loginUser = userMapper.findByEmail(user.getEmail());
-
-        if(loginUser == null||!passwordEncoder.matches(user.getPassword(), loginUser.getPassword())){
-            throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
-        }
-
-        String token = jwtUtil.generateToken(loginUser.getEmail(), loginUser.getId());
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("token", token);
-        response.put("user", loginUser);
-        return response;
-    }
-
+    // 회원가입
+    // 회원가입 예외는 왜 없지? 나중에 추가
     @Transactional
-    public void register(User user) {
-        if(userMapper.findByEmail(user.getEmail()) != null){
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
+    public UserResponseDto register(UserRequestDto userRequestDto) {
+        User isExist = userMapper.findByEmail(userRequestDto.getEmail());
+        if (isExist != null) {
+            return null;
         }
-        user.setPassword(user.getPassword()); // 나중에 password는 암호화 후 저장해야 함
-        // Mapper에게 저장하는 것을 위임
+        User user = new User();
+        user.setEmail(userRequestDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
+        user.setName(userRequestDto.getName());
+        user.setAge(userRequestDto.getAge());
+        user.setBirthDate(userRequestDto.getBirthDate());
+
         userMapper.saveUser(user);
+
+        return toUserResponseDto(user);
     }
 
+    //프로필 조회
+    public UserResponseDto getProfile(int userId) {
+        User user = userMapper.findById(userId);
+        if (user == null) {
+            return null;
+        }
+        return toUserResponseDto(user);
+    }
+
+    // 프로필 수정
+    @Transactional
+    public UserResponseDto updateProfile(int userId, UserRequestDto userRequestDto) {
+        User user = userMapper.findById(userId);
+        if (user == null) {
+            return null;
+        }
+        if(!userRequestDto.getEmail().equals(user.getEmail())){
+            // 이메일은 변경할 수 없습니다.
+            return null; // 나중에 refactoring 필요
+        }
+        user.setName(userRequestDto.getName());
+        user.setAge(userRequestDto.getAge());
+        user.setEmail(userRequestDto.getEmail());
+        user.setBirthDate(userRequestDto.getBirthDate());
+
+        userMapper.update(user);
+
+        return toUserResponseDto(user);
+    }
+
+    // 내 검색 기록 조회
+    public List<SearchHistoryResponseDto> getMySearchHistory(int userId) {
+        List<SearchHistory> histories = userMapper.findSearchHistoryByUserId(userId);
+        return userMapper.findSearchHistoryByUserId(userId)
+                .stream()
+                .map(history -> new SearchHistoryResponseDto(history.getId(), history.getText(), history.getCreatedDate()))
+                .collect(Collectors.toList());
+    }
+
+
+    // 엔티티 -> DTO 변환 메서드
+    private UserResponseDto toUserResponseDto(User user) {
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setId(user.getId());
+        userResponseDto.setEmail(user.getEmail());
+        userResponseDto.setName(user.getName());
+        userResponseDto.setAge(user.getAge());
+        userResponseDto.setBirthDate(user.getBirthDate());
+        return userResponseDto;
+    }
 }

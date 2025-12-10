@@ -10,10 +10,10 @@
     <select id="findByEmail" parameterType="String" resultType="ssafy.realty.Entity.User">
         SELECT *
         FROM User
-        WHERE email = #{email} AND password = #{password}
+        WHERE email = #{email}
     </select>
 
-    <select id="findById" parameterType="String" resultType="ssafy.realty.Entity.User">
+    <select id="findById" parameterType="int" resultType="ssafy.realty.Entity.User">
         SELECT *
         FROM User
         WHERE id = #{id}
