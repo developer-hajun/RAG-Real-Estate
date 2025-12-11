@@ -1,12 +1,14 @@
 package ssafy.realty.DTO.Response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class ReviewResponseDto {
     private int id;
     private int rating;
