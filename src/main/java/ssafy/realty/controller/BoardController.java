@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ssafy.realty.DTO.Response.BoardDetailResponseDto;
-import ssafy.realty.DTO.Response.BoardListResponseDto;
 // import ssafy.realty.Exception.global.DatabaseOperationException; // Controller에서 직접 사용할 필요 없음
 import ssafy.realty.Service.BoardService;
 
@@ -22,8 +21,8 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping
-    public ResponseEntity<List<BoardListResponseDto>> getBoardList() {
-        List<BoardListResponseDto> response = boardService.getBoards();
+    public ResponseEntity<List<BoardDetailResponseDto>> getBoardList() {
+        List<BoardDetailResponseDto> response = boardService.getBoards();
         return ResponseEntity.ok(response);
     }
 

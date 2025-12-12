@@ -28,7 +28,7 @@ public class AuthController {
     }
 
     // 로그인이 없는 이유 는 JwtAuthenticationFilter가 /api/auth/login 요청을 가로채서 처리하기 때문입니다.
-    // 필터에서 ResponseDto<jwtLoginResponseDto>를 생성하여 응답을 반환합니다.
+    // 필터에서 Resp응onseDto<jwtLoginResponseDto>를 생성하여 답을 반환합니다.
 
     //토큰 재발급
     @PostMapping("/reissue")

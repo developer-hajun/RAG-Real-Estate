@@ -42,6 +42,7 @@ public class RealtyController {
                 .address("서울 강남구 테헤란로")
                 .e_price(20000000)  // 보증금 2천
                 .month_price(800000) // 월세 80
+
                 .priceInfo("2000 / 80")
                 .ratingAvg(3.8)
                 .build());

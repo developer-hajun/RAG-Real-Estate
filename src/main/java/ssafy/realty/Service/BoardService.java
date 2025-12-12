@@ -1,11 +1,9 @@
 package ssafy.realty.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +12,6 @@ import ssafy.realty.Exception.global.DatabaseOperationException;
 import ssafy.realty.Mapper.BoardMapper;
 
 import ssafy.realty.DTO.Response.BoardDetailResponseDto;
-import ssafy.realty.DTO.Response.BoardListResponseDto; // BoardListResponseDto가 DTO.Response 패키지에 있다고 가정
 import ssafy.realty.DTO.Response.PostResponseDto; // PostResponseDto 임포트
 
 @Service
@@ -24,7 +21,7 @@ public class BoardService {
 
     private final BoardMapper boardMapper;
 
-    public List<BoardListResponseDto> getBoards() {
+    public List<BoardDetailResponseDto> getBoards() {
         List<Board> boards = boardMapper.selectAllBoardsWithoutPosts();
 
         return boards.stream()
@@ -42,8 +39,8 @@ public class BoardService {
         return convertToBoardDetailDto(board);
     }
 
-    private static BoardListResponseDto convertToBoardListDto(Board board) {
-        return BoardListResponseDto.builder()
+    private static BoardDetailResponseDto convertToBoardListDto(Board board) {
+        return BoardDetailResponseDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())
                 .createdDate(board.getCreatedDate())

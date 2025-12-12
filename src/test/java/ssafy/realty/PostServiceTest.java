@@ -8,10 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
-import ssafy.realty.DTO.Request.PostRequestDto; // 경로 확인 필요
+import ssafy.realty.DTO.Request.PostRequestDto;
 import ssafy.realty.DTO.Response.PostResponseDto;
 import ssafy.realty.Service.PostService;
-// Exception 패키지 경로는 실제 프로젝트에 맞게 수정해주세요
 import ssafy.realty.util.JwtUtil;
 
 import java.util.List;

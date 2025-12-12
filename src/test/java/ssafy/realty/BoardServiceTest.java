@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ssafy.realty.DTO.Response.BoardDetailResponseDto;
-import ssafy.realty.DTO.Response.BoardListResponseDto;
 import ssafy.realty.Entity.Board;
 import ssafy.realty.Entity.Post;
 import ssafy.realty.Mapper.BoardMapper;
@@ -56,7 +55,7 @@ class BoardServiceTest {
         when(boardMapper.selectAllBoardsWithoutPosts()).thenReturn(mockBoards);
 
         // When
-        List<BoardListResponseDto> result = boardService.getBoards();
+        List<BoardDetailResponseDto> result = boardService.getBoards();
 
         // Then
         assertNotNull(result);
