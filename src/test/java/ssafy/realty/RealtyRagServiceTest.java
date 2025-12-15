@@ -79,7 +79,7 @@ class RealtyRagServiceTest {
     void testRealtyRecommendationFlow() {
         // 1. Given: 데이터 준비 (VectorStore에 데이터가 없으므로 먼저 적재)
         System.out.println(">>> 1. 벡터 데이터 적재 시작");
-        realtyDocumentConverter.convertAndUploadAll();
+        //realtyDocumentConverter.convertAndUploadAll();
 
         String userQuery = "보증금 500만원 정도로 저렴한 월세방 찾아줘";
 
