@@ -23,7 +23,7 @@ public class RealtyDocumentConverter {
     private final RealtyMapper realtyMapper;
     private final VectorStore vectorStore;
 
-    private static final int BATCH_SIZE = 10;
+    private static final int BATCH_SIZE = 100;
 
     public void convertAndUploadAll() {
         List<Realty> realities = realtyMapper.selectAllRealty();
