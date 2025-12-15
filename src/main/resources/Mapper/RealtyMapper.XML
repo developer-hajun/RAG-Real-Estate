@@ -27,4 +27,223 @@
         </foreach>
     </select>
 
+    <!-- 건빈 -->
+    <resultMap id="RealtyResponseMap" type="ssafy.realty.DTO.Response.RealtyResponseDto">
+        <id property="id" column="id" />
+
+        <result property="address" column="address" />
+        <result property="name" column="name" />
+        <result property="ePrice" column="e_price" />
+        <result property="monthPrice" column="month_price" />
+        <result property="yCoordinate" column="y_coordinate" />
+        <result property="xCoordinate" column="x_coordinate" />
+
+        <result property="ratingAvg" column="ratingAvg" />
+        <result property="reviewCount" column="reviewCount" />
+        <result property="isFavorite" column="isFavorite" />
+        <result property="priceInfo" column="priceInfo" />
+    </resultMap>
+
+
+
+    <!-- 목록 검색 -->
+    <select id="search" parameterType="ssafy.realty.DTO.Request.RealtySearchRequestDto"
+            resultType="ssafy.realty.DTO.Response.RealtyResponseDto">
+        SELECT
+        r.id,
+        r.address,
+        r.name,
+        r.e_price,
+        r.month_price,
+        r.y_coordinate,
+        r.x_coordinate,
+
+        COALESCE(AVG(rv.rating), 0) AS ratingAvg,
+        COUNT(rv.id) AS reviewCount,
+
+        CASE WHEN f.id IS NULL THEN FALSE ELSE TRUE END AS isFavorite,
+
+        CASE
+        WHEN r.month_price IS NULL OR r.month_price = 0
+        THEN CONCAT('전세 ', r.e_price)
+        ELSE CONCAT(r.e_price, ' / ', r.month_price)
+        END AS priceInfo
+
+        FROM `Realty` r
+        LEFT JOIN `Review` rv ON rv.realty_id = r.id
+        LEFT JOIN `Favorite` f
+        ON f.realty_id = r.id
+        AND f.user_id = #{userId}
+
+        WHERE 1=1
+        <if test="address != null and address != ''">
+            AND r.address LIKE CONCAT('%', #{address}, '%')
+        </if>
+        <if test="name != null and name != ''">
+            AND r.name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        <if test="min_e_price != null">
+            AND r.e_price <![CDATA[>=]]> #{min_e_price}
+        </if>
+        <if test="max_e_price != null">
+            AND r.e_price <![CDATA[<=]]> #{max_e_price}
+        </if>
+        <if test="min_monthly_price != null">
+            AND r.month_price <![CDATA[>=]]> #{min_monthly_price}
+        </if>
+        <if test="max_monthly_price != null">
+            AND r.month_price <![CDATA[<=]]> #{max_monthly_price}
+        </if>
+
+        GROUP BY r.id
+        ORDER BY r.id DESC
+
+        <if test="size != null and size > 0">
+            LIMIT #{size}
+            <if test="offset != null and offset >= 0">
+                OFFSET #{offset}
+            </if>
+        </if>
+    </select>
+
+    <!-- 상세 -->
+    <select id="findById" parameterType="ssafy.realty.DTO.Request.RealtyDetailRequestDto"
+            resultType="ssafy.realty.DTO.Response.RealtyResponseDto">
+        SELECT
+            r.id,
+            r.address,
+            r.name,
+            r.e_price,
+            r.month_price,
+            r.y_coordinate,
+            r.x_coordinate,
+
+            COALESCE(AVG(rv.rating), 0) AS ratingAvg,
+            COUNT(rv.id) AS reviewCount,
+
+            CASE WHEN f.id IS NULL THEN FALSE ELSE TRUE END AS isFavorite,
+
+            CASE
+                WHEN r.month_price IS NULL OR r.month_price = 0
+                    THEN CONCAT('전세 ', r.e_price)
+                ELSE CONCAT(r.e_price, ' / ', r.month_price)
+                END AS priceInfo
+
+        FROM `Realty` r
+                 LEFT JOIN `Review` rv ON rv.realty_id = r.id
+                 LEFT JOIN `Favorite` f
+                           ON f.realty_id = r.id
+                               AND f.user_id = #{userId}
+        WHERE r.id = #{id}
+        GROUP BY r.id
+    </select>
+
+    <!-- 리뷰 목록 -->
+    <select id="findReviewsByRealtyId" parameterType="int"
+            resultType="ssafy.realty.DTO.Response.ReviewResponseDto">
+        SELECT
+            rv.id,
+            rv.rating,
+            rv.text,
+            rv.createdDate,
+            rv.updatedDate,
+            rv.user_id AS userId,
+            u.name AS userName
+        FROM `Review` rv
+                 LEFT JOIN `User` u ON u.id = rv.user_id
+        WHERE rv.realty_id = #{realtyId}
+        ORDER BY rv.id DESC
+    </select>
+
+    <!-- 리뷰 등록 -->
+    <insert id="insertReview" parameterType="ssafy.realty.DTO.Request.ReviewInsertDto">
+        INSERT INTO `Review` (rating, text, createdDate, updatedDate, user_id, realty_id)
+        VALUES (#{rating}, #{text}, NOW(), NOW(), #{userId}, #{realtyId})
+    </insert>
+
+    <!-- 찜 -->
+    <select id="countFavorite" parameterType="ssafy.realty.DTO.Request.RealtyFavoriteKeyDto" resultType="int">
+        SELECT COUNT(*)
+        FROM `Favorite`
+        WHERE user_id = #{userId} AND realty_id = #{realtyId}
+    </select>
+
+    <insert id="insertFavorite" parameterType="ssafy.realty.DTO.Request.RealtyFavoriteKeyDto">
+        INSERT INTO `Favorite` (createdDate, updatedDate, user_id, realty_id)
+        VALUES (NOW(), NOW(), #{userId}, #{realtyId})
+    </insert>
+
+    <delete id="deleteFavorite" parameterType="ssafy.realty.DTO.Request.RealtyFavoriteKeyDto">
+        DELETE FROM `Favorite`
+        WHERE user_id = #{userId} AND realty_id = #{realtyId}
+    </delete>
+
+    <!-- 내 찜 목록 -->
+    <select id="findFavoritesByUserId" parameterType="int" resultMap="RealtyResponseMap">
+        SELECT
+            r.id,
+            r.address,
+            r.name,
+            r.e_price,
+            r.month_price,
+            r.y_coordinate,
+            r.x_coordinate,
+
+            COALESCE(AVG(rv.rating), 0) AS ratingAvg,
+            COUNT(rv.id) AS reviewCount,
+
+            TRUE AS isFavorite,
+
+            CASE
+                WHEN r.month_price IS NULL OR r.month_price = 0
+                    THEN CONCAT('전세 ', r.e_price)
+                ELSE CONCAT(r.e_price, ' / ', r.month_price)
+                END AS priceInfo
+
+        FROM `Favorite` f
+                 INNER JOIN `Realty` r ON r.id = f.realty_id
+                 LEFT JOIN `Review` rv ON rv.realty_id = r.id
+        WHERE f.user_id = #{userId}
+        GROUP BY r.id
+        ORDER BY f.id DESC
+    </select>
+
+    <!-- 비교 -->
+    <select id="findByIds" parameterType="ssafy.realty.DTO.Request.RealtyCompareRequestDto"
+            resultType="ssafy.realty.DTO.Response.RealtyResponseDto">
+        SELECT
+        r.id,
+        r.address,
+        r.name,
+        r.e_price,
+        r.month_price,
+        r.y_coordinate,
+        r.x_coordinate,
+
+        COALESCE(AVG(rv.rating), 0) AS ratingAvg,
+        COUNT(rv.id) AS reviewCount,
+
+        CASE WHEN f.id IS NULL THEN FALSE ELSE TRUE END AS isFavorite,
+
+        CASE
+        WHEN r.month_price IS NULL OR r.month_price = 0
+        THEN CONCAT('전세 ', r.e_price)
+        ELSE CONCAT(r.e_price, ' / ', r.month_price)
+        END AS priceInfo
+
+        FROM `Realty` r
+        LEFT JOIN `Review` rv ON rv.realty_id = r.id
+        LEFT JOIN `Favorite` f
+        ON f.realty_id = r.id
+        AND f.user_id = #{userId}
+
+        WHERE r.id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+
+        GROUP BY r.id
+        ORDER BY r.id DESC
+    </select>
+
 </mapper>

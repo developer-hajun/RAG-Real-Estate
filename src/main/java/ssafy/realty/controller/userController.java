@@ -7,6 +7,7 @@ import ssafy.realty.Common.ResponseDto;
 import ssafy.realty.DTO.Response.SearchHistoryResponseDto;
 import ssafy.realty.DTO.Request.UserRequestDto;
 import ssafy.realty.DTO.Response.UserResponseDto;
+import ssafy.realty.Service.RealtyService;
 import ssafy.realty.Service.UserService;
 import ssafy.realty.util.JwtUtil;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class userController {
 
     private final UserService userService;
+    private final RealtyService realtyService;
     private final JwtUtil jwtUtil;
 
     //프로필 조회
@@ -62,6 +64,16 @@ public class userController {
         List<SearchHistoryResponseDto> histories = userService.getMySearchHistory(userId);
         // 검색 기록이 없을 때 빈 리스트 반환 굳이 체크할 필요 없음
         return ResponseEntity.ok(ResponseDto.create(200, "검색 기록 조회 성공", histories));
+    }
+
+    // 찜 목록 조회
+    @GetMapping("/favorites")
+    public ResponseEntity<ResponseDto<?>> myFavorites(@RequestHeader("Authorization") String authorization) {
+        Integer userId = jwtUtil.extractUserId(authorization);
+        if (userId == null) {
+            return ResponseEntity.ok(ResponseDto.create(401, "유효하지 않은 토큰입니다."));
+        }
+        return ResponseEntity.ok(ResponseDto.create(200, "찜 목록 조회 성공", realtyService.myFavorites(userId)));
     }
 
 

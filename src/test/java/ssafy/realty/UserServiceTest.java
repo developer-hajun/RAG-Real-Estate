@@ -93,7 +93,8 @@ class UserServiceTest {
         when(userMapper.findById(15)).thenReturn(existing);
 
         UserRequestDto req = new UserRequestDto();
-        req.setEmail("new@e.com");
+        // 이메일은 변경 불가이므로 기존 이메일과 동일하게 설정
+        req.setEmail("old@e.com");
         req.setName("New");
         req.setAge(28);
         req.setBirthDate(LocalDateTime.of(1997,7,7,0,0));
@@ -101,7 +102,7 @@ class UserServiceTest {
         UserResponseDto res = userService.updateProfile(15, req);
 
         assertNotNull(res);
-        assertEquals("new@e.com", res.getEmail());
+        assertEquals("old@e.com", res.getEmail());
         assertEquals("New", res.getName());
         verify(userMapper).update(existing);
     }

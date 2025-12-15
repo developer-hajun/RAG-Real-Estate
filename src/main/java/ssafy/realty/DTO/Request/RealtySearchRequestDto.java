@@ -23,4 +23,8 @@ public class RealtySearchRequestDto {
     private int page = 0;
     private int size = 0;
 
+    // ===== 서버 내부용(클라가 안 보내도 됨) =====
+    private Integer userId; // JWT에서 세팅
+    private Integer offset; // service에서 page*size 계산해서 세팅
+
 }
