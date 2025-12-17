@@ -13,7 +13,7 @@ class DataMigrationTest {
     private RealtyDocumentConverter converter;
 
     @Test
-    @Rollback(false) // 롤백 없이 실행 (사실 VectorDB는 트랜잭션 대상이 아니라서 원래도 저장되지만 명시적으로 설정)
+    @Rollback(false)
     void runMigrationOnce() {
         System.out.println("====== 데이터 업로드 시작 ======");
         converter.convertAndUploadAll();

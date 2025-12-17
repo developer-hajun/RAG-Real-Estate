@@ -23,7 +23,7 @@ public class RealtyDocumentConverter {
     private final RealtyMapper realtyMapper;
     private final VectorStore vectorStore;
 
-    private static final int BATCH_SIZE = 100;
+    private static final int BATCH_SIZE = 1000;
 
     public void convertAndUploadAll() {
         List<Realty> realities = realtyMapper.selectAllRealty();
@@ -38,7 +38,6 @@ public class RealtyDocumentConverter {
             if (documentBatch.size() >= BATCH_SIZE || i == realities.size() - 1) {
                 uploadBatch(documentBatch);
                 documentBatch.clear();
-                break;
             }
         }
 
@@ -57,18 +56,37 @@ public class RealtyDocumentConverter {
     }
 
     public Document toDocument(Realty realty) {
-        String content = String.format(
-                "이 매물의 이름은 %s이고, 주소는 %s입니다. 보증금 %d만원에 월세 %d만원인 매물입니다.",
-                realty.getName(),
-                realty.getAddress(),
-                realty.getE_price(),
-                realty.getMonth_price()
-        );
+        String content;
+
+        // [수정 포인트 1] 전세 판단 기준 변경
+        // 월세(month_price)가 0원이면 '전세', 아니면 '월세'로 판단
+        boolean isJeonse = (realty.getMonth_price() == 0);
+
+        if (isJeonse) {
+            // 전세인 경우: 보증금은 e_price입니다.
+            content = String.format(
+                    "이 매물의 이름은 %s이고, 주소는 %s입니다. 보증금 %d만원인 전세 매물입니다.",
+                    realty.getName(),
+                    realty.getAddress(),
+                    realty.getE_price() // 전세금(보증금)
+            );
+        } else {
+            // 월세인 경우
+            content = String.format(
+                    "이 매물의 이름은 %s이고, 주소는 %s입니다. 보증금 %d만원에 월세 %d만원인 월세 매물입니다.", // '월세 매물' 명시
+                    realty.getName(),
+                    realty.getAddress(),
+                    realty.getE_price(),     // 보증금
+                    realty.getMonth_price()  // 월세
+            );
+        }
 
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("realty_id", String.valueOf(realty.getId()));
-        metadata.put("price_deposit", realty.getE_price());
-        metadata.put("price_monthly", realty.getMonth_price());
+
+        // [수정 포인트 2] 메타데이터 저장 시 헷갈리지 않게 저장
+        metadata.put("price_deposit", realty.getE_price());     // 보증금
+        metadata.put("price_monthly", realty.getMonth_price()); // 월세
         metadata.put("location_lat", realty.getY_coordinate());
         metadata.put("location_lon", realty.getX_coordinate());
         metadata.put("region_depth1", extractRegion(realty.getAddress()));
