@@ -13,6 +13,7 @@ import ssafy.realty.DTO.Response.ReviewResponseDto;
 import ssafy.realty.Entity.Realty;
 import ssafy.realty.Service.RealtyRagService;
 import ssafy.realty.Service.RealtyService;
+import ssafy.realty.Service.UserService;
 import ssafy.realty.util.JwtUtil;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class RealtyController {
 
     private final RealtyService realtyService;
     private final RealtyRagService realtyRagService; // ✅ 그대로 주입해서 사용
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
     private Integer userIdOrNull(String authorization) {
@@ -89,7 +91,16 @@ public class RealtyController {
 
     // ✅ RAG 질문(페이지용) - RealtyRagService 그대로 호출 // Dto를 쓸지 String을 쓸지 고민 일단 주석 처리
     @PostMapping("/rag")
-    public ResponseEntity<ResponseDto<?>> rag(@RequestBody String query) {
+    public ResponseEntity<ResponseDto<?>> rag(@RequestHeader(value = "Authorization", required = false) String authorization, @RequestBody String query) {
+        // 1. 유저 ID 추출 (로그인 한 경우에만 기록 저장)
+        Integer userId = userIdOrNull(authorization);
+
+        // 2. 검색 기록 저장 (비로그인 유저도 검색은 되지만 기록은 안 남김) <- 나중에 수정 지금은 다 열어놔서 상관없지만
+        if (userId != null) {
+            userService.saveSearchHistory(userId, query);
+        }
+
+        // 3. RAG 서비스 호출 및 결과 반환
         RealtyRecommendationResponse res = realtyRagService.getRealtyRecommendation(query);
         return ResponseEntity.ok(ResponseDto.create(200, "RAG 추천 성공", res));
     }

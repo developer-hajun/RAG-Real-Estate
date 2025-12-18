@@ -14,6 +14,9 @@ public class UserRequestDto {
     private Integer age;
     private LocalDateTime birthDate;
 
+    private String newPassword;
+    private String newPasswordCheck;
+
     // 로그인 요청 생성자
     public UserRequestDto(String email, String password){
         this.email = email;

@@ -36,5 +36,16 @@
         ORDER BY createdDate DESC
     </select>
 
+    <update id="updatePassword" parameterType="ssafy.realty.Entity.User">
+        UPDATE User
+        SET password = #{password},
+            updatedDate = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <insert id="insertSearchHistory" parameterType="ssafy.realty.Entity.SearchHistory">
+        INSERT INTO SearchHistory (user_id, text, createdDate, updatedDate)
+        VALUES (#{userId}, #{text}, NOW(), NOW())
+    </insert>
 
 </mapper>

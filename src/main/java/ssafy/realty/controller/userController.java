@@ -76,6 +76,23 @@ public class userController {
         return ResponseEntity.ok(ResponseDto.create(200, "찜 목록 조회 성공", realtyService.myFavorites(userId)));
     }
 
+    // 비밀번호 변경
+    @PutMapping("/changePw")
+    public ResponseEntity<ResponseDto<?>> changePw(@RequestHeader("Authorization") String authorization,@RequestBody UserRequestDto userRequestDto) {
+        Integer userId = jwtUtil.extractUserId(authorization);
+        if (userId == null) {
+            return ResponseEntity.ok(ResponseDto.create(401,"유효하지 않은 토큰입니다."));
+        }
+        try {
+            userService.changePw(userId, userRequestDto);
+            return ResponseEntity.ok(ResponseDto.create(200, "비밀번호 변경 성공"));
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.ok(ResponseDto.create(400, e.getMessage()));
+        }catch(Exception e){
+            return ResponseEntity.ok(ResponseDto.create(500, "비밀번호 변경 중 오류가 발생했습니다."));
+        }
+    }
+
 
 
 }

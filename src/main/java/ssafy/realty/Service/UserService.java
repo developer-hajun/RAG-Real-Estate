@@ -84,6 +84,30 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    // 비밀번호 변경
+    @Transactional
+    public void changePw(int userId, UserRequestDto userRequestDto) {
+        User user = userMapper.findById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        // 1. 현재 비밀번호 확인 (DTO의 기존 password 필드 활용)
+        // 보안을 위해 필수적이지만, 필요 없다면 이 if문을 주석 처리하세요.
+//        if (!passwordEncoder.matches(userRequestDto.getPassword(), user.getPassword())) {
+//            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+//        }
+
+        // 2. 새 비밀번호와 확인용 비밀번호 일치 여부 확인
+        if (userRequestDto.getNewPassword() == null || !userRequestDto.getNewPassword().equals(userRequestDto.getNewPasswordCheck())) {
+            throw new IllegalArgumentException("변경할 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 3. 비밀번호 암호화 및 업데이트
+        user.setPassword(passwordEncoder.encode(userRequestDto.getNewPassword()));
+        userMapper.updatePassword(user);
+    }
+
 
     // 엔티티 -> DTO 변환 메서드
     private UserResponseDto toUserResponseDto(User user) {
@@ -95,4 +119,15 @@ public class UserService {
         userResponseDto.setBirthDate(user.getBirthDate());
         return userResponseDto;
     }
+
+    @Transactional
+    public void saveSearchHistory(int userId, String query) {
+        SearchHistory history = SearchHistory.builder()
+                .userId(userId)
+                .text(query)
+                .build();
+        userMapper.insertSearchHistory(history);
+    }
+
+
 }

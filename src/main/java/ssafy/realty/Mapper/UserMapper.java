@@ -23,4 +23,10 @@ public interface UserMapper {
     // 검색 기록 조회
     List<SearchHistory> findSearchHistoryByUserId(int userId);
 
+    // 비밀 번호 변경
+    void updatePassword(User user);
+
+    // 검색 기록 저장
+    void insertSearchHistory(SearchHistory searchHistory);
+
 }
