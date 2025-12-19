@@ -25,4 +25,6 @@ public class Realty {
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 
+    private float exclusiveArea;
+
 }

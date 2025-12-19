@@ -36,6 +36,9 @@ public class RealtyResponseDto {
     private long reviewCount;
     private long isFavorite; // 찜 여부
 
+    // 전용 면적
+    private float exclusiveArea;
+
 //    // 목록 조회용 Dto
 //    public RealtyResponseDto(int id, String address, String name, int e_price, int month_price, int reviewCount, float ratingAvg, boolean isFavorite) {
 //        this.id = id;
@@ -56,6 +59,7 @@ public class RealtyResponseDto {
         this.monthPrice = realty.getMonth_price();
         this.yCoordinate = realty.getY_coordinate();
         this.xCoordinate = realty.getX_coordinate();
+        this.exclusiveArea = realty.getExclusiveArea();
 
         // priceInfo -> 프론트에서 가격 표시 편의를 위한 변수
         this.priceInfo = (this.monthPrice == 0)

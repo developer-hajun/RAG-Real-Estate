@@ -56,7 +56,7 @@ class RealtyMockTest {
         // ====================================================
         int userId = 1;
         List<SearchHistory> dummyHistory = new ArrayList<>();
-        dummyHistory.add(new SearchHistory(1, "서울 원룸",now(),now()));
+//        dummyHistory.add(new SearchHistory(1, "서울 원룸",now(),now()));
         
         // "검색 기록을 조회하면 이 가짜 기록을 줘라"라고 설정
         given(searchHistoryMapper.searchHistoryTop3(userId)).willReturn(dummyHistory);

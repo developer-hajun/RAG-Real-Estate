@@ -229,7 +229,9 @@
         WHEN r.month_price IS NULL OR r.month_price = 0
         THEN CONCAT('전세 ', r.e_price)
         ELSE CONCAT(r.e_price, ' / ', r.month_price)
-        END AS priceInfo
+        END AS priceInfo,
+
+        r.exclusive_Area
 
         FROM `Realty` r
         LEFT JOIN `Review` rv ON rv.realty_id = r.id
