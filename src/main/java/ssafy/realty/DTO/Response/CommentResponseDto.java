@@ -17,6 +17,7 @@ public class CommentResponseDto {
     private CommentResponseDto parentComment;
     private LocalDateTime updatedDate;
     private List<CommentResponseDto> replies;
+    private String userName;
 
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();

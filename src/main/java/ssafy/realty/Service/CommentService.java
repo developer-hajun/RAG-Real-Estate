@@ -90,6 +90,13 @@ public class CommentService {
         // 1. 기본 댓글 정보 매핑 (id, content, updatedDate 등)
         CommentResponseDto dto = new CommentResponseDto(comment);
 
+        // ✅ 작성자 이름은 댓글/대댓글 상관없이 항상 세팅
+        if (comment.getUser() != null) {
+            dto.setUserName(comment.getUser().getName());
+        } else {
+            dto.setUserName(null); // 프론트에서 null이면 익명 처리
+        }
+
         // 2. 대댓글(Replies) 처리
         if (comment.getReplies() != null && !comment.getReplies().isEmpty()) {
             List<CommentResponseDto> replyDtos = comment.getReplies().stream()

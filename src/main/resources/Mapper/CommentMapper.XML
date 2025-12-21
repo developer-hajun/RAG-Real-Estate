@@ -10,6 +10,7 @@
         <!-- 댓글 작성자 ID 매핑을 위한 association 추가 -->
         <association property="user" javaType="ssafy.realty.Entity.User">
             <id property="id" column="a_user_id"/>
+            <result property="name" column="a_user_name"/>
         </association>
 
         <collection property="replies" ofType="ssafy.realty.Entity.Comment">
@@ -20,6 +21,7 @@
             <!-- 답글 작성자 ID 매핑 -->
             <association property="user" javaType="ssafy.realty.Entity.User">
                 <id property="id" column="b_user_id"/>
+                <result property="name" column="b_user_name"/>
             </association>
         </collection>
     </resultMap>
@@ -67,13 +69,17 @@
         a.createdDate      AS a_created_date,
         a.updatedDate      AS a_updated_date,
         a.user_id          AS a_user_id,
+        ua.name            AS a_user_name,
         b.id               AS b_id,
         b.content          AS b_content,
         b.createdDate      AS b_created_date,
         b.updatedDate      AS b_updated_date,
-        b.user_id          AS b_user_id
+        b.user_id          AS b_user_id,
+        ub.name            AS b_user_name
         FROM Comment a
         LEFT JOIN Comment b ON a.id = b.parentComment_id
+        LEFT JOIN `User` ua ON ua.id = a.user_id
+        LEFT JOIN  `User` ub ON ub.id = b.user_id
         WHERE a.post_id = #{postId}
         AND a.parentComment_id IS NULL
     </select>
